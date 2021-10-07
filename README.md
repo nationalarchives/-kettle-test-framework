@@ -11,19 +11,17 @@ A framework for testing Pentaho Kettle Transformations.
 
 ### Build steps:
 1. Clone the Git repository:
-    
-
-    git clone git@github.com:nationalarchives/kettle-test-framework.git
-	
+```
+git clone https://github.com/nationalarchives/kettle-test-framework.git
+```
 2. Compile and install to your local Ivy or Maven repository:
-   
-
-    sbt clean compile publishLocal
-	
+```
+sbt clean compile publishLocal
+```
 After this other builds on the same machine can depend on it:
-
-	libraryDependencies += "uk.gov.nationalarchives" %% "kettle-test-framework" % "0.1-SNAPSHOT"
-
+```
+libraryDependencies += "uk.gov.nationalarchives" %% "kettle-test-framework" % "0.1-SNAPSHOT"
+```
 ## Usage
 
 The test framework is designed to allow you to test Pentaho Kettle transformations without needing to have the Pentaho Data Integration tool or an RDBMS installed on the local machine. It achieves by running Pentaho and the H2 database in embedded mode during tests.
