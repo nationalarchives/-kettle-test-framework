@@ -1,0 +1,40 @@
+@prefix nat:   <http://www.nationalarchives.gov.uk/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix cat:   <http://cat.nationalarchives.gov.uk/> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix odrl:  <http://www.w3.org/ns/odrl/2/> .
+
+cat:policy.Open_on_Transfer_1991-12-31
+        a                 odrl:Policy , odrl:Offer ;
+        rdfs:label        "Open on Transfer 1991-12-31" ;
+        odrl:conflict     odrl:perm ;
+        odrl:inheritFrom  cat:policy.Closed_or_Retained_Document ;
+        odrl:permission   [ a                odrl:Permission ;
+                            odrl:action      odrl:readDocument ;
+                            odrl:assignee    cat:The_Public ;
+                            odrl:assigner    cat:The_National_Archives ;
+                            odrl:constraint  [ a                  odrl:Constraint ;
+                                               odrl:leftOperand   odrl:dateTime ;
+                                               odrl:operator      odrl:gteq ;
+                                               odrl:rightOperand  "1991-12-31Z"^^xsd:date
+                                             ]
+                          ] ;
+        odrl:profile      nat:odrl-profile .
+
+cat:policy.Retained_Until_1996
+        a                 odrl:Policy , odrl:Offer ;
+        rdfs:label        "Retained Until 1996" ;
+        odrl:conflict     odrl:perm ;
+        odrl:inheritFrom  cat:policy.Closed_or_Retained_Document ;
+        odrl:permission   [ a                odrl:Permission ;
+                            odrl:action      odrl:readDocument ;
+                            odrl:assignee    cat:The_Public ;
+                            odrl:assigner    cat:The_National_Archives ;
+                            odrl:constraint  [ a                  odrl:Constraint ;
+                                               odrl:leftOperand   odrl:dateTime ;
+                                               odrl:operator      odrl:gteq ;
+                                               odrl:rightOperand  "1996-01-01Z"^^xsd:date
+                                             ]
+                          ] ;
+        odrl:profile      nat:odrl-profile .

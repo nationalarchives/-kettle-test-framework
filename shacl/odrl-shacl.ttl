@@ -1,0 +1,147 @@
+@prefix odrl:  <http://www.w3.org/ns/odrl/2/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix nat: <http://www.nationalarchives.gov.uk/> .
+@prefix cat: <http://cat.nationalarchives.gov.uk/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+odrl:PolicyShape
+    a sh:NodeShape ;
+    sh:targetClass odrl:Policy ;
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+    	sh:path odrl:conflict ;
+    	sh:minCount 1 ;
+    	sh:maxCount 1;
+    	sh:hasValue odrl:perm ;
+    ] ;
+    sh:property [
+    	sh:path odrl:profile ;
+    	sh:minCount 1 ;
+    	sh:maxCount 1;
+    	sh:hasValue nat:odrl-profile ;
+    ] ;
+    sh:property [
+    	sh:path odrl:inheritFrom ;
+    	sh:minCount 1 ;
+    	sh:maxCount 1;
+    	sh:in ( cat:policy.Closure cat:policy.Closed_or_Retained_Document cat:policy.Closed_Description ) ;
+    ] .
+
+    odrl:OfferShape
+    a sh:NodeShape ;
+    sh:targetClass odrl:Offer ;
+    sh:property [
+        sh:path [ 
+            sh:alternativePath ( odrl:permission odrl:prohibition ) 
+        ] ;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:nodeKind sh:BlankNode     	
+    ] .
+
+odrl:PermissionShape
+	a sh:NodeShape;
+	sh:targetClass odrl:Permission ;
+	a sh:NodeShape ;
+    sh:property [
+        sh:path odrl:assigner ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+	sh:property [
+        sh:path odrl:assignee ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path odrl:action ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:in (odrl:readDescription odrl:readDocument )
+    ] ;
+    sh:property [
+    	sh:path odrl:constraint ;
+    	sh:minCount 0 ;
+    	sh:maxCount 1 ;
+    	sh:nodeKind sh:BlankNode    	
+    ] .
+
+odrl:ProhibitionShape
+    a sh:NodeShape ;
+    sh:targetClass odrl:Prohibition ;
+    sh:property [
+        sh:path odrl:assigner ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+	sh:property [
+        sh:path odrl:assignee ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path odrl:action ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:hasValue odrl:read
+    ] .
+
+
+odrl:LogicalConstraintShape
+	a sh:NodeShape;
+	sh:targetClass odrl:LogicalConstraint ;
+	sh:property [
+		sh:path odrl:andSequence ;
+		sh:minCount 1 ;
+    	sh:maxCount 1 ;
+    	sh:nodeKind sh:BlankNode
+	] .
+
+odrl:LeftOperandShape
+    a sh:NodeShape ;
+    sh:targetClass odrl:Constraint ;              
+    sh:property [
+        sh:path odrl:leftOperand ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:in (odrl:dateTime odrl:delayPeriod )
+        
+    ] .
+
+odrl:rightOperandSingleShape
+    a sh:NodeShape ;
+    sh:targetClass odrl:Constraint ;          
+    sh:property [
+        sh:path odrl:rightOperand ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:or ( 
+        	[sh:datatype xsd:date]
+        	[sh:datatype xsd:duration]
+        )
+    ] .
+
+odrl:ConstraintShape
+	a sh:NodeShape ;
+	sh:targetClass odrl:Constraint  ;
+	sh:property [
+        sh:path odrl:operator ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:in ( odrl:gt odrl:eq odrl:gteq )
+    ] .
+
+odrl:LogicConstraintShape
+    a sh:NodeShape ;
+    sh:targetObjectsOf odrl:andSequence ;       
+    sh:property [
+        sh:path ( [ sh:zeroOrMorePath rdf:rest ] rdf:first ) ;
+        sh:class odrl:Constraint ;
+    ] .
