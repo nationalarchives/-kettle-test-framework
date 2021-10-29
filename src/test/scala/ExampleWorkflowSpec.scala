@@ -9,6 +9,7 @@ import uk.gov.nationalarchives.pdi.step.jena.shacl.JenaShaclStepMeta
 import uk.gov.nationalarchives.pentaho.{ DatabaseManager, QueryManager, WorkflowManager }
 
 import java.io.File
+import java.nio.file.Paths
 import scala.reflect.io.Directory
 import scala.util.{ Failure, Success }
 
@@ -16,11 +17,11 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
 
   private val exampleWorkflow = "example.ktr"
   private val outputDirectory = "output"
-  private val resultFilename = "example.ttl"
-  private val shaclDirectory =
-    "/home/rkw/Source/GitHub/nationalarchives/tna-cat/Omega/ildb/export/kettle/resources/shacl"
+  private val resultFilenamePrefix = "example"
+  private val resultFilenameSuffix = ".ttl"
+  private val shaclDirectory = new File("shacl")
+  private val shaclDirectoryPath = shaclDirectory.getAbsolutePath
   private val shaclFilename = "odrl-shacl.ttl"
-  //private val dbDriverClass = "org.h2.Driver"
   private val databaseDir = "./data-dir"
   private val databaseName = "test-db"
   private val databaseUrl = s"jdbc:h2:$databaseDir/$databaseName;database_to_upper=false;mode=MSSQLServer"
@@ -49,15 +50,19 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
       val params =
         Map(
           "OUTPUT_FILEPATH" -> outputDirectory,
-          "OUTPUT_FILENAME" -> resultFilename,
-          "SHACL_DIRECTORY" -> shaclDirectory,
-          "SHACL_FILENAME"  -> shaclFilename)
+          "OUTPUT_FILENAME" -> s"$resultFilenamePrefix$resultFilenameSuffix",
+          "SHACL_DIRECTORY" -> shaclDirectoryPath,
+          "SHACL_FILENAME"  -> shaclFilename
+        )
       val is = this.getClass.getClassLoader.getResourceAsStream(exampleWorkflow)
-      val _ = WorkflowManager.runTransformation(is, Some(params), Some(plugins))
+      val _ = WorkflowManager.runTransformation(is, "src/test/resources", Some(params), Some(plugins))
       is.close()
       val result = QueryManager.executeQuery(
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label ?label. }",
-        s"$outputDirectory/$resultFilename")
+        outputDirectory,
+        resultFilenamePrefix,
+        resultFilenameSuffix
+      )
       result mustBe Success(2)
     }
   }
