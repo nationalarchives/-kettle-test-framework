@@ -8,7 +8,7 @@ import uk.gov.nationalarchives.pdi.step.jena.serializer.JenaSerializerStepMeta
 import uk.gov.nationalarchives.pdi.step.jena.shacl.JenaShaclStepMeta
 import uk.gov.nationalarchives.pentaho.{ DatabaseManager, QueryManager, WorkflowManager }
 
-import java.io.File
+import java.io.{ File, FileInputStream }
 import java.nio.file.Paths
 import scala.reflect.io.Directory
 import scala.util.{ Failure, Success }
@@ -54,9 +54,11 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
           "SHACL_DIRECTORY" -> shaclDirectoryPath,
           "SHACL_FILENAME"  -> shaclFilename
         )
-      val is = this.getClass.getClassLoader.getResourceAsStream(exampleWorkflow)
-      val _ = WorkflowManager.runTransformation(is, "src/test/resources", Some(params), Some(plugins))
-      is.close()
+      val workflowFile = Paths.get(this.getClass.getClassLoader.getResource(exampleWorkflow).toURI).toFile
+      val workflowParentDir = workflowFile.getParent
+      val workflowInputStream = new FileInputStream(workflowFile)
+      val _ = WorkflowManager.runTransformation(workflowInputStream, workflowParentDir, Some(params), Some(plugins))
+      workflowInputStream.close()
       val result = QueryManager.executeQuery(
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label ?label. }",
         outputDirectory,
