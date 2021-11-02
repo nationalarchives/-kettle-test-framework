@@ -4,6 +4,7 @@ import org.apache.jena.query._
 import org.apache.jena.rdf.model.Model
 import org.apache.jena.riot._
 
+import java.io.File
 import scala.util.{ Failure, Success, Try, Using }
 
 /**
@@ -14,11 +15,17 @@ object QueryManager {
   /**
     * Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an error on failure
     * @param sparqlString the SPARQL query
-    * @param rdfFilename the RDF file name to query
+    * @param rdfDirectory the RDF output directory
+    * @param rdfFilenamePrefix the prefix of the RDF output filename
+    * @param rdfFilenameSuffix the suffix of the RDF output filename
     * @return
     */
-  def executeQuery(sparqlString: String, rdfFilename: String): Try[Int] =
-    buildQueryAndModel(sparqlString, rdfFilename) match {
+  def executeQuery(
+    sparqlString: String,
+    rdfDirectory: String,
+    rdfFilenamePrefix: String,
+    rdfFilenameSuffix: String): Try[Int] =
+    buildQueryAndModel(sparqlString, getRdfFilename(rdfDirectory, rdfFilenamePrefix, rdfFilenameSuffix)) match {
       case Success((query, model)) =>
         Using(QueryExecutionFactory.create(query, model)) { queryExec =>
           val results = queryExec.execSelect
@@ -32,6 +39,22 @@ object QueryManager {
     val query = Try(QueryFactory.create(sparqlString))
     val model = Try(RDFDataMgr.loadModel(rdfFilename))
     query.flatMap(q => model.map(m => (q, m)))
+  }
+
+  private def getRdfFilename(directory: String, prefix: String, suffix: String): String = {
+    val files = getListOfFiles(directory, suffix).filter(file => file.getName.startsWith(prefix))
+    if (files.nonEmpty) files.head.getPath else ""
+  }
+
+  private def getListOfFiles(directory: String, suffix: String): List[File] = {
+    val dir = new File(directory)
+    if (dir.exists && dir.isDirectory) {
+      dir.listFiles.filter(_.isFile).toList.filter { file =>
+        file.getName.endsWith(suffix)
+      }
+    } else {
+      List[File]()
+    }
   }
 
 }

@@ -8,19 +8,20 @@ import uk.gov.nationalarchives.pdi.step.jena.serializer.JenaSerializerStepMeta
 import uk.gov.nationalarchives.pdi.step.jena.shacl.JenaShaclStepMeta
 import uk.gov.nationalarchives.pentaho.{ DatabaseManager, QueryManager, WorkflowManager }
 
-import java.io.File
+import java.io.{ File, FileInputStream }
+import java.nio.file.Paths
 import scala.reflect.io.Directory
-import scala.util.{ Failure, Success }
+import scala.util.{ Failure, Success, Using }
 
 class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
 
   private val exampleWorkflow = "example.ktr"
   private val outputDirectory = "output"
-  private val resultFilename = "example.ttl"
-  private val shaclDirectory =
-    "/home/rkw/Source/GitHub/nationalarchives/tna-cat/Omega/ildb/export/kettle/resources/shacl"
+  private val resultFilenamePrefix = "example"
+  private val resultFilenameSuffix = ".ttl"
+  private val shaclDirectory = new File("shacl")
+  private val shaclDirectoryPath = shaclDirectory.getAbsolutePath
   private val shaclFilename = "odrl-shacl.ttl"
-  //private val dbDriverClass = "org.h2.Driver"
   private val databaseDir = "./data-dir"
   private val databaseName = "test-db"
   private val databaseUrl = s"jdbc:h2:$databaseDir/$databaseName;database_to_upper=false;mode=MSSQLServer"
@@ -49,15 +50,21 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
       val params =
         Map(
           "OUTPUT_FILEPATH" -> outputDirectory,
-          "OUTPUT_FILENAME" -> resultFilename,
-          "SHACL_DIRECTORY" -> shaclDirectory,
-          "SHACL_FILENAME"  -> shaclFilename)
-      val is = this.getClass.getClassLoader.getResourceAsStream(exampleWorkflow)
-      val _ = WorkflowManager.runTransformation(is, Some(params), Some(plugins))
-      is.close()
+          "OUTPUT_FILENAME" -> s"$resultFilenamePrefix$resultFilenameSuffix",
+          "SHACL_DIRECTORY" -> shaclDirectoryPath,
+          "SHACL_FILENAME"  -> shaclFilename
+        )
+      val workflowFile = Paths.get(this.getClass.getClassLoader.getResource(exampleWorkflow).toURI).toFile
+      val workflowParentDir = workflowFile.getParent
+      Using(new FileInputStream(workflowFile)) { workflowInputStream =>
+        val _ = WorkflowManager.runTransformation(workflowInputStream, workflowParentDir, Some(params), Some(plugins))
+      }
       val result = QueryManager.executeQuery(
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label ?label. }",
-        s"$outputDirectory/$resultFilename")
+        outputDirectory,
+        resultFilenamePrefix,
+        resultFilenameSuffix
+      )
       result mustBe Success(2)
     }
   }

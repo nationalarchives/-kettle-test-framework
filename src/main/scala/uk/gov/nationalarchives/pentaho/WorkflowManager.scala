@@ -3,6 +3,7 @@ package uk.gov.nationalarchives.pentaho
 import org.pentaho.di.core.KettleEnvironment
 import org.pentaho.di.core.compress.{ CompressionPluginType, NoneCompressionProvider }
 import org.pentaho.di.core.plugins.{ PluginTypeInterface, StepPluginType }
+import org.pentaho.di.core.variables.Variables
 import org.pentaho.di.trans.step.StepMetaInterface
 import org.pentaho.di.trans.{ Trans, TransMeta }
 
@@ -23,6 +24,7 @@ object WorkflowManager {
     */
   def runTransformation(
     transformationIs: InputStream,
+    workingDirectory: String,
     maybeParameters: Option[Map[String, String]],
     maybePlugins: Option[List[Class[_ <: StepMetaInterface]]]): Either[Throwable, Boolean] =
     try {
@@ -35,7 +37,9 @@ object WorkflowManager {
       KettleEnvironment.init(pluginTypes.asJava, true)
 
       // set the parameters for the transformation
-      val trans = new Trans(new TransMeta(transformationIs, null, false, null, null))
+      val vars = new Variables()
+      vars.setVariable("Internal.Entry.Current.Directory", workingDirectory)
+      val trans = new Trans(new TransMeta(transformationIs, null, false, vars, null))
 
       maybeParameters match {
         case Some(params) =>
