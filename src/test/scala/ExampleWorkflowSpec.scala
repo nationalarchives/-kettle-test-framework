@@ -11,7 +11,7 @@ import uk.gov.nationalarchives.pentaho.{ DatabaseManager, QueryManager, Workflow
 import java.io.{ File, FileInputStream }
 import java.nio.file.Paths
 import scala.reflect.io.Directory
-import scala.util.{ Failure, Success }
+import scala.util.{ Failure, Success, Using }
 
 class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
 
@@ -56,9 +56,9 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
         )
       val workflowFile = Paths.get(this.getClass.getClassLoader.getResource(exampleWorkflow).toURI).toFile
       val workflowParentDir = workflowFile.getParent
-      val workflowInputStream = new FileInputStream(workflowFile)
-      val _ = WorkflowManager.runTransformation(workflowInputStream, workflowParentDir, Some(params), Some(plugins))
-      workflowInputStream.close()
+      Using(new FileInputStream(workflowFile)) { workflowInputStream =>
+        val _ = WorkflowManager.runTransformation(workflowInputStream, workflowParentDir, Some(params), Some(plugins))
+      }
       val result = QueryManager.executeQuery(
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label ?label. }",
         outputDirectory,

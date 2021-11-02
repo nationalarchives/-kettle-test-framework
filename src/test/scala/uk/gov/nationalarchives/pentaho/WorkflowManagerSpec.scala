@@ -11,6 +11,7 @@ import uk.gov.nationalarchives.pdi.step.jena.shacl.JenaShaclStepMeta
 
 import java.io.FileInputStream
 import java.nio.file.Paths
+import scala.util.Using
 
 class WorkflowManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
@@ -29,22 +30,22 @@ class WorkflowManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
     "return a Right of type Boolean when a workflow is successfully executed" in {
       val workflowFile = Paths.get(this.getClass.getClassLoader.getResource(simpleWorkflow).toURI).toFile
       val workflowParentDir = workflowFile.getParent
-      val is = new FileInputStream(workflowFile)
-      val result = WorkflowManager.runTransformation(is, workflowParentDir, None, Some(plugins))
-      result mustBe Right(true)
-      is.close()
+      Using(new FileInputStream(workflowFile)) { is =>
+        val result = WorkflowManager.runTransformation(is, workflowParentDir, None, Some(plugins))
+        result mustBe Right(true)
+      }
     }
 
     "return a Left of type Throwable when a workflow fails to execute" in {
       val notAWorkflowFile = Paths.get(this.getClass.getClassLoader.getResource(notAWorkflow).toURI).toFile
       val workflowParentDir = notAWorkflowFile.getParent
-      val is = new FileInputStream(notAWorkflowFile)
-      val result = WorkflowManager.runTransformation(is, workflowParentDir, None, None)
-      result match {
-        case Left(e) => e mustBe a[Throwable]
-        case _       => fail()
+      Using(new FileInputStream(notAWorkflowFile)) { is =>
+        val result = WorkflowManager.runTransformation(is, workflowParentDir, None, None)
+        result match {
+          case Left(e) => e mustBe a[Throwable]
+          case _       => fail()
+        }
       }
-      is.close()
     }
   }
 
