@@ -1,6 +1,8 @@
 package uk.gov.nationalarchives.pentaho
 
+import java.io.File
 import java.sql.{ DriverManager, Statement }
+import scala.io.Source
 import scala.util.{ Try, Using }
 
 /**
@@ -15,9 +17,18 @@ case class DatabaseManager(jdbcUrl: String) {
     * @return
     */
   def executeSqlScript(sql: String): Try[Boolean] =
-    Using.Manager { _ =>
-      val connection = DriverManager.getConnection(jdbcUrl)
-      val statement: Statement = connection.createStatement
+    Using.Manager { use =>
+      val connection = use(DriverManager.getConnection(jdbcUrl))
+      val statement = use(connection.createStatement)
+      statement.execute(sql)
+    }
+
+  def executeSqlScriptFromFile(sqlFile: File): Try[Boolean] =
+    Using.Manager { use =>
+      val sqlSource = use(Source.fromFile(sqlFile))
+      val connection = use(DriverManager.getConnection(jdbcUrl))
+      val statement: Statement = use(connection.createStatement)
+      val sql = sqlSource.getLines().mkString
       statement.execute(sql)
     }
 
