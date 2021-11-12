@@ -1,13 +1,14 @@
-package uk.gov.nationalarchives.pentaho
+package uk.gov.nationalarchives.pdi.test
 
 import org.pentaho.di.core.KettleEnvironment
-import org.pentaho.di.core.compress.{ CompressionPluginType, NoneCompressionProvider }
-import org.pentaho.di.core.plugins.{ PluginTypeInterface, StepPluginType }
+import org.pentaho.di.core.compress.{CompressionPluginType, NoneCompressionProvider}
+import org.pentaho.di.core.plugins.{PluginTypeInterface, StepPluginType}
 import org.pentaho.di.core.variables.Variables
 import org.pentaho.di.trans.step.StepMetaInterface
-import org.pentaho.di.trans.{ Trans, TransMeta }
+import org.pentaho.di.trans.{Trans, TransMeta}
 
 import java.io.InputStream
+import java.nio.file.Path
 import scala.jdk.CollectionConverters._
 
 /**
@@ -18,13 +19,14 @@ object WorkflowManager {
   /**
     * Executes a Pentaho Kettle transformation with the option of parameters and plugins
     * @param transformationIs the InputStream with the Kettle transformation
+    * @param workingDirectory the working directory for the transformation
     * @param maybeParameters an optional map of transformation parameters
     * @param maybePlugins an optional list of plugin classes to be used
     * @return
     */
   def runTransformation(
     transformationIs: InputStream,
-    workingDirectory: String,
+    workingDirectory: Path,
     maybeParameters: Option[Map[String, String]],
     maybePlugins: Option[List[Class[_ <: StepMetaInterface]]]): Either[Throwable, Boolean] =
     try {
@@ -38,7 +40,7 @@ object WorkflowManager {
 
       // set the parameters for the transformation
       val vars = new Variables()
-      vars.setVariable("Internal.Entry.Current.Directory", workingDirectory)
+      vars.setVariable("Internal.Entry.Current.Directory", workingDirectory.toAbsolutePath.toString)
       val trans = new Trans(new TransMeta(transformationIs, null, false, vars, null))
 
       maybeParameters match {

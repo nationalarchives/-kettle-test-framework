@@ -1,14 +1,15 @@
-import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import sbt.Keys.resolvers
 
 val pentahoVersion = "9.1.0.0-SNAPSHOT"
+
+ThisBuild / versionScheme := Some("semver-spec")
 
 lazy val root = Project("kettle-test-framework", file("."))
   .configs(IntegrationTest)
   .settings(
     Defaults.itSettings,
-    organization := "uk.gov.nationalarchives",
-    version := "0.1-SNAPSHOT",
+    organization := "uk.gov.nationalarchives.pdi",
+    version := "0.1.0-SNAPSHOT",
     scalaVersion := "2.13.6",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("https://github.com/nationalarchives/kettle-test-framework")),
@@ -27,16 +28,29 @@ lazy val root = Project("kettle-test-framework", file("."))
       "pentaho-kettle"              % "kettle-engine"         % pentahoVersion,
       "org.pentaho.di.plugins"      % "pdi-core-plugins-impl" % pentahoVersion,
       "org.apache.jena"             % "apache-jena-libs"      % "3.17.0",
-      "org.slf4j"                   % "slf4j-simple"          % "1.7.32",
-      "com.h2database"              % "h2"                    % "1.4.200",
-      "com.h2database"              % "h2"                    % "1.4.200" % "test",
-      "uk.gov.nationalarchives.pdi" % "kettle-jena-plugins"   % "2.2.1-SNAPSHOT",
-      "pentaho-kettle"              % "kettle-engine"         % pentahoVersion % "test" classifier "tests",
-      "pentaho-kettle"              % "kettle-core"           % pentahoVersion % "test" classifier "tests",
-      "org.scalatest"               %% "scalatest"            % "3.2.10" % "test",
-      "org.scalatestplus"           %% "mockito-3-4"          % "3.2.10.0" % "test",
-      "commons-io"                  % "commons-io"            % "2.11.0" % "test"
-    )
+      "org.slf4j"                   % "slf4j-simple"          % "1.7.32" % Test,
+      "com.h2database"              % "h2"                    % "1.4.200" % Test,
+      "uk.gov.nationalarchives.pdi" % "kettle-jena-plugins"   % "2.2.0" % Test,
+      "pentaho-kettle"              % "kettle-engine"         % pentahoVersion % Test classifier "tests",
+      "pentaho-kettle"              % "kettle-core"           % pentahoVersion % Test classifier "tests",
+      "org.scalatest"               %% "scalatest"            % "3.2.10" % Test,
+      "org.scalatestplus"           %% "mockito-3-4"          % "3.2.10.0" % Test,
+      "commons-io"                  % "commons-io"            % "2.11.0" % Test
+    ),
+    dependencyCheckArchiveAnalyzerEnabled := Some(false),
+    dependencyCheckAssemblyAnalyzerEnabled := Some(false),
+    dependencyCheckAutoconfAnalyzerEnabled := Some(false),
+    dependencyCheckCmakeAnalyzerEnabled := Some(false),
+    dependencyCheckCocoapodsEnabled := Some(false),
+    dependencyCheckNodeAnalyzerEnabled := Some(false),
+    dependencyCheckNodeAuditAnalyzerEnabled := Some(false),
+    dependencyCheckNexusAnalyzerEnabled := Some(false),
+    dependencyCheckNuspecAnalyzerEnabled := Some(false),
+    dependencyCheckNugetConfAnalyzerEnabled := Some(false),
+    dependencyCheckPyDistributionAnalyzerEnabled := Some(false),
+    dependencyCheckPyPackageAnalyzerEnabled := Some(false),
+    dependencyCheckPyPackageAnalyzerEnabled := Some(false),
+    dependencyCheckRubygemsAnalyzerEnabled := Some(false),
+    dependencyCheckRetireJSAnalyzerEnabled := Some(false),
+    dependencyCheckSwiftEnabled := Some(false)
   )
-
-scalafmtOnCompile := true

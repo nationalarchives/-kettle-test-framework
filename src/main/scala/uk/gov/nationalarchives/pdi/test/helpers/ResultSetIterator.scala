@@ -1,4 +1,4 @@
-package uk.gov.nationalarchives.pentaho.helpers
+package uk.gov.nationalarchives.pdi.test.helpers
 
 import java.sql.ResultSet
 

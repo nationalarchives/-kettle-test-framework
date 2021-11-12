@@ -1,4 +1,4 @@
-package uk.gov.nationalarchives.pentaho
+package uk.gov.nationalarchives.pdi.test
 
 import org.pentaho.di.trans.step.StepMetaInterface
 import org.pentaho.di.trans.steps.concatfields.ConcatFieldsMeta
@@ -9,7 +9,7 @@ import uk.gov.nationalarchives.pdi.step.jena.model.JenaModelStepMeta
 import uk.gov.nationalarchives.pdi.step.jena.serializer.JenaSerializerStepMeta
 import uk.gov.nationalarchives.pdi.step.jena.shacl.JenaShaclStepMeta
 
-import java.io.FileInputStream
+import java.nio.file.Files
 import java.nio.file.Paths
 import scala.util.Using
 
@@ -28,18 +28,18 @@ class WorkflowManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
   "WorkflowManager.runTransformations" must {
 
     "return a Right of type Boolean when a workflow is successfully executed" in {
-      val workflowFile = Paths.get(this.getClass.getClassLoader.getResource(simpleWorkflow).toURI).toFile
+      val workflowFile = Paths.get(this.getClass.getClassLoader.getResource(simpleWorkflow).toURI)
       val workflowParentDir = workflowFile.getParent
-      Using(new FileInputStream(workflowFile)) { is =>
+      Using(Files.newInputStream(workflowFile)) { is =>
         val result = WorkflowManager.runTransformation(is, workflowParentDir, None, Some(plugins))
         result mustBe Right(true)
       }
     }
 
     "return a Left of type Throwable when a workflow fails to execute" in {
-      val notAWorkflowFile = Paths.get(this.getClass.getClassLoader.getResource(notAWorkflow).toURI).toFile
+      val notAWorkflowFile = Paths.get(this.getClass.getClassLoader.getResource(notAWorkflow).toURI)
       val workflowParentDir = notAWorkflowFile.getParent
-      Using(new FileInputStream(notAWorkflowFile)) { is =>
+      Using(Files.newInputStream(notAWorkflowFile)) { is =>
         val result = WorkflowManager.runTransformation(is, workflowParentDir, None, None)
         result match {
           case Left(e) => e mustBe a[Throwable]
