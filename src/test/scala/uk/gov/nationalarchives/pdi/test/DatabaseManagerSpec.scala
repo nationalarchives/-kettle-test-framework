@@ -10,9 +10,12 @@ import uk.gov.nationalarchives.pdi.test.helpers.IOHelper.delete
 import java.io.IOException
 import java.nio.file.{FileVisitResult, Files, Path, Paths, SimpleFileVisitor}
 import java.nio.file.attribute.BasicFileAttributes
-import java.sql.SQLException
+import java.sql.{DriverManager, SQLException}
 
 class DatabaseManagerSpec extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterEach {
+
+  // TODO(AR) this is a workaround for the driver being unregistered after the first run of the tests in sbt -- see https://stackoverflow.com/questions/14033629/playframework-2-0-scala-no-suitable-driver-found-in-tests
+  DriverManager.registerDriver(new org.h2.Driver)
 
   private val databaseDir = "./data-dir2"
   private val databaseName = "test-db"
