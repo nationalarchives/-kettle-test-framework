@@ -43,7 +43,7 @@ lazy val root = Project("kettle-test-framework", file("."))
       "org.apache.jena"             % "apache-jena-libs"      % "3.17.0",
       "org.slf4j"                   % "slf4j-simple"          % "1.7.32" % Test,
       "com.h2database"              % "h2"                    % "1.4.200" % Test,
-      "uk.gov.nationalarchives.pdi" % "kettle-jena-plugins"   % "2.2.0" % Test,
+      "uk.gov.nationalarchives.pdi" % "kettle-jena-plugins"   % "2.2.1" % Test,
       "pentaho-kettle"              % "kettle-engine"         % pentahoVersion % Test classifier "tests",
       "pentaho-kettle"              % "kettle-core"           % pentahoVersion % Test classifier "tests",
       "org.scalatest"               %% "scalatest"            % "3.2.10" % Test,
