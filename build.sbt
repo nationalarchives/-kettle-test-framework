@@ -35,7 +35,7 @@ lazy val root = Project("kettle-test-framework", file("."))
       Resolver.mavenLocal,
       "PentahoNexus" at "https://nexus.pentaho.org/content/groups/omni"
     ),
-    headerLicense := Some(HeaderLicense.MIT("2020", "The National Archives")),
+    headerLicense := Some(HeaderLicense.MIT("2021", "The National Archives")),
     libraryDependencies ++= Seq(
       "pentaho-kettle"              % "kettle-core"           % pentahoVersion,
       "pentaho-kettle"              % "kettle-engine"         % pentahoVersion,
