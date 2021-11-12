@@ -1,4 +1,4 @@
-package uk.gov.nationalarchives.pentaho
+package uk.gov.nationalarchives.pdi.test
 
 import org.apache.jena.riot.RiotException
 import org.scalatest.TryValues.convertTryToSuccessOrFailure

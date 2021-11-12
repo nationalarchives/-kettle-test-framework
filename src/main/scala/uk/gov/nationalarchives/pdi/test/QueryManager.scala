@@ -1,4 +1,4 @@
-package uk.gov.nationalarchives.pentaho
+package uk.gov.nationalarchives.pdi.test
 
 import org.apache.jena.query._
 import org.apache.jena.rdf.model.Model

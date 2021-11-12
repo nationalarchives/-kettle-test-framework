@@ -1,4 +1,4 @@
-package uk.gov.nationalarchives.pentaho
+package uk.gov.nationalarchives.pdi.test
 
 import org.pentaho.di.trans.step.StepMetaInterface
 import org.pentaho.di.trans.steps.concatfields.ConcatFieldsMeta

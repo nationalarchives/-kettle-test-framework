@@ -6,7 +6,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.nationalarchives.pdi.step.jena.model.JenaModelStepMeta
 import uk.gov.nationalarchives.pdi.step.jena.serializer.JenaSerializerStepMeta
 import uk.gov.nationalarchives.pdi.step.jena.shacl.JenaShaclStepMeta
-import uk.gov.nationalarchives.pentaho.{ DatabaseManager, QueryManager, WorkflowManager }
+import uk.gov.nationalarchives.pdi.test.{DatabaseManager, QueryManager, WorkflowManager}
 
 import java.io.{ File, FileInputStream }
 import java.nio.file.Paths

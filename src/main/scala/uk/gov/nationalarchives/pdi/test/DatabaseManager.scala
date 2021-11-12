@@ -1,4 +1,4 @@
-package uk.gov.nationalarchives.pentaho
+package uk.gov.nationalarchives.pdi.test
 
 import java.io.File
 import java.sql.{ DriverManager, Statement }

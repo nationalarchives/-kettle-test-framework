@@ -1,4 +1,4 @@
-package uk.gov.nationalarchives.pentaho
+package uk.gov.nationalarchives.pdi.test
 
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
