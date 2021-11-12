@@ -65,7 +65,7 @@ object QueryManager {
 
   private def getRdfFilename(directory: Path, prefix: String, suffix: String): String = {
     findFile(directory, prefix, suffix) match {
-      case Success(Some(file)) => file.getFileName.toString
+      case Success(Some(file)) => file.toAbsolutePath.toString
       case _ => ""
     }
   }
