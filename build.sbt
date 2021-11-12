@@ -1,4 +1,3 @@
-import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import sbt.Keys.resolvers
 
 val pentahoVersion = "9.1.0.0-SNAPSHOT"
@@ -55,5 +54,3 @@ lazy val root = Project("kettle-test-framework", file("."))
     dependencyCheckRetireJSAnalyzerEnabled := Some(false),
     dependencyCheckSwiftEnabled := Some(false)
   )
-
-scalafmtOnCompile := true
