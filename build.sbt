@@ -9,6 +9,7 @@ lazy val root = Project("kettle-test-framework", file("."))
   .settings(
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives.pdi",
+    name := "kettle-test-framework",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := "2.13.6",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
@@ -17,6 +18,18 @@ lazy val root = Project("kettle-test-framework", file("."))
     description := "Kettle Test Framework",
     organizationName := "The National Archives",
     organizationHomepage := Some(url("http://nationalarchives.gov.uk")),
+    scmInfo := Some(ScmInfo(
+      url("https://github.com/nationalarchives/kettle-test-framework"),
+      "scm:git@github.com:nationalarchives/kettle-test-framework.git")
+    ),
+    developers := List(
+      Developer(
+        id = "rwalpole",
+        name = "Rob Walpole",
+        email = "rob.walpole@devexe.co.uk",
+        url = url("http://www.devexe.co.uk")
+      )
+    ),
     scalacOptions += "-target:jvm-1.8",
     resolvers ++= Seq(
       Resolver.mavenLocal,
@@ -52,5 +65,15 @@ lazy val root = Project("kettle-test-framework", file("."))
     dependencyCheckPyPackageAnalyzerEnabled := Some(false),
     dependencyCheckRubygemsAnalyzerEnabled := Some(false),
     dependencyCheckRetireJSAnalyzerEnabled := Some(false),
-    dependencyCheckSwiftEnabled := Some(false)
+    dependencyCheckSwiftEnabled := Some(false),
+
+    publishMavenStyle := true,
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+    publishTo := {
+      val nexus = "https://oss.sonatype.org/"
+      if (isSnapshot.value)
+        Some("snapshots" at nexus + "content/repositories/snapshots/")
+      else
+        Some("releases"  at nexus + "service/local/staging/deploy/maven2/")
+    }
   )
