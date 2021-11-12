@@ -37,7 +37,23 @@ lazy val root = Project("kettle-test-framework", file("."))
       "org.scalatest"               %% "scalatest"            % "3.2.10" % Test,
       "org.scalatestplus"           %% "mockito-3-4"          % "3.2.10.0" % Test,
       "commons-io"                  % "commons-io"            % "2.11.0" % Test
-    )
+    ),
+    dependencyCheckArchiveAnalyzerEnabled := Some(false),
+    dependencyCheckAssemblyAnalyzerEnabled := Some(false),
+    dependencyCheckAutoconfAnalyzerEnabled := Some(false),
+    dependencyCheckCmakeAnalyzerEnabled := Some(false),
+    dependencyCheckCocoapodsEnabled := Some(false),
+    dependencyCheckNodeAnalyzerEnabled := Some(false),
+    dependencyCheckNodeAuditAnalyzerEnabled := Some(false),
+    dependencyCheckNexusAnalyzerEnabled := Some(false),
+    dependencyCheckNuspecAnalyzerEnabled := Some(false),
+    dependencyCheckNugetConfAnalyzerEnabled := Some(false),
+    dependencyCheckPyDistributionAnalyzerEnabled := Some(false),
+    dependencyCheckPyPackageAnalyzerEnabled := Some(false),
+    dependencyCheckPyPackageAnalyzerEnabled := Some(false),
+    dependencyCheckRubygemsAnalyzerEnabled := Some(false),
+    dependencyCheckRetireJSAnalyzerEnabled := Some(false),
+    dependencyCheckSwiftEnabled := Some(false)
   )
 
 scalafmtOnCompile := true
