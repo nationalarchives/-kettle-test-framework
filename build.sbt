@@ -3,6 +3,8 @@ import sbt.Keys.resolvers
 
 val pentahoVersion = "9.1.0.0-SNAPSHOT"
 
+ThisBuild / versionScheme := Some("semver-spec")
+
 lazy val root = Project("kettle-test-framework", file("."))
   .configs(IntegrationTest)
   .settings(
