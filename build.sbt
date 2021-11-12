@@ -7,7 +7,7 @@ lazy val root = Project("kettle-test-framework", file("."))
   .configs(IntegrationTest)
   .settings(
     Defaults.itSettings,
-    organization := "uk.gov.nationalarchives",
+    organization := "uk.gov.nationalarchives.pdi",
     version := "0.1-SNAPSHOT",
     scalaVersion := "2.13.6",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
