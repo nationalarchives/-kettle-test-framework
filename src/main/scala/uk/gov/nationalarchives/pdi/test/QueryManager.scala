@@ -3,9 +3,10 @@ package uk.gov.nationalarchives.pdi.test
 import org.apache.jena.query._
 import org.apache.jena.rdf.model.Model
 import org.apache.jena.riot._
+import uk.gov.nationalarchives.pdi.test.helpers.IOHelper.findFile
 
-import java.io.File
-import scala.util.{ Failure, Success, Try, Using }
+import java.nio.file.Path
+import scala.util.{Failure, Success, Try, Using}
 
 /**
   * Used to execute SPARQL queries against RDF files output by Pentaho Kettle during transformation testing
@@ -22,7 +23,7 @@ object QueryManager {
     */
   def executeQuery(
     sparqlString: String,
-    rdfDirectory: String,
+    rdfDirectory: Path,
     rdfFilenamePrefix: String,
     rdfFilenameSuffix: String): Try[Int] =
     buildQueryAndModel(sparqlString, getRdfFilename(rdfDirectory, rdfFilenamePrefix, rdfFilenameSuffix)) match {
@@ -41,20 +42,10 @@ object QueryManager {
     query.flatMap(q => model.map(m => (q, m)))
   }
 
-  private def getRdfFilename(directory: String, prefix: String, suffix: String): String = {
-    val files = getListOfFiles(directory, suffix).filter(file => file.getName.startsWith(prefix))
-    if (files.nonEmpty) files.head.getPath else ""
-  }
-
-  private def getListOfFiles(directory: String, suffix: String): List[File] = {
-    val dir = new File(directory)
-    if (dir.exists && dir.isDirectory) {
-      dir.listFiles.filter(_.isFile).toList.filter { file =>
-        file.getName.endsWith(suffix)
-      }
-    } else {
-      List[File]()
+  private def getRdfFilename(directory: Path, prefix: String, suffix: String): String = {
+    findFile(directory, prefix, suffix) match {
+      case Success(Some(file)) => file.getFileName.toString
+      case _ => ""
     }
   }
-
 }

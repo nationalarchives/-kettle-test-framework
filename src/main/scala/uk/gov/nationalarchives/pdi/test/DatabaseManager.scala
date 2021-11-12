@@ -1,8 +1,9 @@
 package uk.gov.nationalarchives.pdi.test
 
-import java.io.File
+import java.nio.charset.StandardCharsets.UTF_8
+import java.nio.file.Files
+import java.nio.file.Path
 import java.sql.{ DriverManager, Statement }
-import scala.io.Source
 import scala.util.{ Try, Using }
 
 /**
@@ -23,12 +24,11 @@ case class DatabaseManager(jdbcUrl: String) {
       statement.execute(sql)
     }
 
-  def executeSqlScriptFromFile(sqlFile: File): Try[Boolean] =
+  def executeSqlScriptFromFile(sqlFile: Path): Try[Boolean] =
     Using.Manager { use =>
-      val sqlSource = use(Source.fromFile(sqlFile))
       val connection = use(DriverManager.getConnection(jdbcUrl))
       val statement: Statement = use(connection.createStatement)
-      val sql = sqlSource.getLines().mkString
+      val sql = new String(Files.readAllBytes(sqlFile), UTF_8)
       statement.execute(sql)
     }
 

@@ -6,12 +6,11 @@ import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.nationalarchives.pdi.step.jena.model.JenaModelStepMeta
 import uk.gov.nationalarchives.pdi.step.jena.serializer.JenaSerializerStepMeta
 import uk.gov.nationalarchives.pdi.step.jena.shacl.JenaShaclStepMeta
+import uk.gov.nationalarchives.pdi.test.helpers.IOHelper.delete
 import uk.gov.nationalarchives.pdi.test.{DatabaseManager, QueryManager, WorkflowManager}
 
-import java.io.{ File, FileInputStream }
-import java.nio.file.Paths
-import scala.reflect.io.Directory
-import scala.util.{ Failure, Success, Using }
+import java.nio.file.{Files, Paths}
+import scala.util.{Failure, Success, Using}
 
 class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
 
@@ -19,8 +18,8 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
   private val outputDirectory = "output"
   private val resultFilenamePrefix = "example"
   private val resultFilenameSuffix = ".ttl"
-  private val shaclDirectory = new File("shacl")
-  private val shaclDirectoryPath = shaclDirectory.getAbsolutePath
+  private val shaclDirectory = Paths.get("shacl")
+  private val shaclDirectoryPath = shaclDirectory.toAbsolutePath.toString
   private val shaclFilename = "odrl-shacl.ttl"
   private val databaseDir = "./data-dir"
   private val databaseName = "test-db"
@@ -47,21 +46,21 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
       }
       insertData(sql)
 
-      val params =
+      val params : Map[String, String] =
         Map(
           "OUTPUT_FILEPATH" -> outputDirectory,
           "OUTPUT_FILENAME" -> s"$resultFilenamePrefix$resultFilenameSuffix",
           "SHACL_DIRECTORY" -> shaclDirectoryPath,
           "SHACL_FILENAME"  -> shaclFilename
         )
-      val workflowFile = Paths.get(this.getClass.getClassLoader.getResource(exampleWorkflow).toURI).toFile
+      val workflowFile = Paths.get(this.getClass.getClassLoader.getResource(exampleWorkflow).toURI)
       val workflowParentDir = workflowFile.getParent
-      Using(new FileInputStream(workflowFile)) { workflowInputStream =>
+      Using(Files.newInputStream(workflowFile)) { workflowInputStream =>
         val _ = WorkflowManager.runTransformation(workflowInputStream, workflowParentDir, Some(params), Some(plugins))
       }
       val result = QueryManager.executeQuery(
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label ?label. }",
-        outputDirectory,
+        Paths.get(outputDirectory),
         resultFilenamePrefix,
         resultFilenameSuffix
       )
@@ -86,9 +85,9 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
   }
 
   private def clearDatabaseDataDir(): Unit =
-    new Directory(new File(databaseDir)).deleteRecursively()
+    delete(Paths.get(databaseDir))
 
   private def deleteTestFiles(): Unit =
-    FileUtils.deleteDirectory(new File(outputDirectory))
+    delete(Paths.get(outputDirectory))
 
 }
