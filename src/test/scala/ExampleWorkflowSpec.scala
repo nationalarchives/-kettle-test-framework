@@ -85,7 +85,7 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
       val result = QueryManager.executeQuery(
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label ?label. }",
         Paths.get(outputDirectory),
-        resultFilenamePrefix,
+        List(resultFilenamePrefix),
         resultFilenameSuffix
       )
       result mustBe Success(2)
