@@ -29,9 +29,9 @@ import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.nationalarchives.pdi.test.helpers.IOHelper.delete
 
 import java.io.IOException
-import java.nio.file.{FileVisitResult, Files, Path, Paths, SimpleFileVisitor}
+import java.nio.file.{ FileVisitResult, Files, Path, Paths, SimpleFileVisitor }
 import java.nio.file.attribute.BasicFileAttributes
-import java.sql.{DriverManager, SQLException}
+import java.sql.{ DriverManager, SQLException }
 
 class DatabaseManagerSpec extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterEach {
 

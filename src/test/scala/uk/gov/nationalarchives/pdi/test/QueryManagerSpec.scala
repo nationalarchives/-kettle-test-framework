@@ -37,14 +37,55 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val exampleRdfParentDir = exampleRdfFile.getParent
       val sparqlQuery =
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label ?label . }"
-      val result = QueryManager.executeQuery(sparqlQuery, exampleRdfParentDir, "example", ".ttl")
+      val result = QueryManager.executeQuery(sparqlQuery, exampleRdfParentDir, List("example"), ".ttl")
       result.success.value must be(2)
     }
     "return a Failure with an Exception" in {
       val sparqlQuery =
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label ?label . }"
-      val result = QueryManager.executeQuery(sparqlQuery, Paths.get("."), "", "")
+      val result = QueryManager.executeQuery(sparqlQuery, Paths.get("."), List(""), "")
       result.failure.exception mustBe a[RiotException]
+    }
+    "create and query a combined graph from two RDF files" in {
+      val exampleRdfFile = Paths.get(this.getClass.getClassLoader.getResource("output-record-descriptions.ttl").toURI)
+      val exampleRdfParentDir = exampleRdfFile.getParent
+      val sparqlQuery =
+        s"""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+           |PREFIX dct: <http://purl.org/dc/terms/>
+           |PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
+           |SELECT ?policy ?label WHERE {
+           |?item dct:accessRights ?rights .
+           |?rights odrl:hasPolicy ?policy .
+           |?policy a odrl:Policy .
+        }""".stripMargin
+      val result = QueryManager
+        .executeQuery(sparqlQuery, exampleRdfParentDir, List("output-record-descriptions", "policies"), ".ttl")
+      result.success.value must be(1)
+    }
+    "create and query a combined graph from three RDF files" in {
+      val exampleRdfFile = Paths.get(this.getClass.getClassLoader.getResource("output-record-descriptions.ttl").toURI)
+      val exampleRdfParentDir = exampleRdfFile.getParent
+      val sparqlQuery =
+        s"""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+           |PREFIX dct: <http://purl.org/dc/terms/>
+           |PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
+           |PREFIX ver: <http://purl.org/linked-data/version#>
+           |PREFIX cat: <http://cat.nationalarchives.gov.uk/>
+           |SELECT ?policy WHERE {
+           |?concept dct:type cat:record-concept ;
+           |         ver:currentVersion ?description .
+           |?description dct:accessRights ?rights .
+           |?rights odrl:hasPolicy ?policy .
+           |?policy a odrl:Policy .
+        }""".stripMargin
+      val result = QueryManager
+        .executeQuery(
+          sparqlQuery,
+          exampleRdfParentDir,
+          List("output-record-descriptions", "output-record-concepts", "policies"),
+          ".ttl"
+        )
+      result.success.value must be(1)
     }
   }
 

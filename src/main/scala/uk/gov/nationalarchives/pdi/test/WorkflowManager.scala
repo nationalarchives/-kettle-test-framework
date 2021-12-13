@@ -22,23 +22,21 @@
 package uk.gov.nationalarchives.pdi.test
 
 import org.pentaho.di.core.KettleEnvironment
-import org.pentaho.di.core.compress.{CompressionPluginType, NoneCompressionProvider}
-import org.pentaho.di.core.plugins.{PluginTypeInterface, StepPluginType}
+import org.pentaho.di.core.compress.{ CompressionPluginType, NoneCompressionProvider }
+import org.pentaho.di.core.plugins.{ PluginTypeInterface, StepPluginType }
 import org.pentaho.di.core.variables.Variables
 import org.pentaho.di.trans.step.StepMetaInterface
-import org.pentaho.di.trans.{Trans, TransMeta}
+import org.pentaho.di.trans.{ Trans, TransMeta }
 
 import java.io.InputStream
 import java.nio.file.Path
 import scala.jdk.CollectionConverters._
 
-/**
-  * Used to execute Pentaho Kettle transformations during testing via the Java API
+/** Used to execute Pentaho Kettle transformations during testing via the Java API
   */
 object WorkflowManager {
 
-  /**
-    * Executes a Pentaho Kettle transformation with the option of parameters and plugins
+  /** Executes a Pentaho Kettle transformation with the option of parameters and plugins
     * @param transformationIs the InputStream with the Kettle transformation
     * @param workingDirectory the working directory for the transformation
     * @param maybeParameters an optional map of transformation parameters
@@ -49,7 +47,8 @@ object WorkflowManager {
     transformationIs: InputStream,
     workingDirectory: Path,
     maybeParameters: Option[Map[String, String]],
-    maybePlugins: Option[List[Class[_ <: StepMetaInterface]]]): Either[Throwable, Boolean] =
+    maybePlugins: Option[List[Class[_ <: StepMetaInterface]]]
+  ): Either[Throwable, Boolean] =
     try {
       val pluginTypes = maybePlugins match {
         case Some(plugins) => setUpPlugins(plugins)
@@ -66,9 +65,8 @@ object WorkflowManager {
 
       maybeParameters match {
         case Some(params) =>
-          for (param <- params) {
+          for (param <- params)
             trans.setParameterValue(param._1, param._2)
-          }
         case _ =>
       }
 
@@ -88,9 +86,8 @@ object WorkflowManager {
     compressionPluginType
       .registerCustom(classOf[NoneCompressionProvider], "compression", "COMPRESSION", "Compression", "", null)
     val stepRegister = registerStepPlugin(stepPluginType) _
-    for (plugin <- plugins) {
+    for (plugin <- plugins)
       stepRegister(plugin)
-    }
     List(stepPluginType, compressionPluginType)
   }
 
@@ -102,7 +99,8 @@ object WorkflowManager {
       stepAnnotation.id(),
       stepAnnotation.name(),
       stepAnnotation.description(),
-      stepAnnotation.image())
+      stepAnnotation.image()
+    )
   }
 
 }
