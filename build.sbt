@@ -10,7 +10,7 @@ lazy val root = Project("kettle-test-framework", file("."))
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives.pdi",
     name := "kettle-test-framework",
-    version := "0.2.0-SNAPSHOT",
+    version := "0.2.0",
     scalaVersion := "2.13.6",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("https://github.com/nationalarchives/kettle-test-framework")),
