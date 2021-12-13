@@ -22,21 +22,19 @@
 package uk.gov.nationalarchives.pdi.test
 
 import org.apache.jena.query._
-import org.apache.jena.rdf.model.{Model, ModelFactory}
+import org.apache.jena.rdf.model.{ Model, ModelFactory }
 import org.apache.jena.riot._
 import uk.gov.nationalarchives.pdi.test.helpers.IOHelper.findFile
 
 import java.nio.file.Path
 import scala.annotation.tailrec
-import scala.util.{Failure, Success, Try, Using}
+import scala.util.{ Failure, Success, Try, Using }
 
-/**
-  * Used to execute SPARQL queries against RDF files output by Pentaho Kettle during transformation testing
+/** Used to execute SPARQL queries against RDF files output by Pentaho Kettle during transformation testing
   */
 object QueryManager {
 
-  /**
-    * Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an error on failure
+  /** Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an error on failure
     * @param sparqlString the SPARQL query
     * @param rdfDirectory the RDF output directory
     * @param rdfFilenamePrefix the prefix of the RDF output filename
@@ -47,10 +45,10 @@ object QueryManager {
     sparqlString: String,
     rdfDirectory: Path,
     rdfFilenamePrefix: String,
-    rdfFilenameSuffix: String): Try[Int] = executeQuery(sparqlString, rdfDirectory, List(rdfFilenamePrefix),rdfFilenameSuffix)
+    rdfFilenameSuffix: String
+  ): Try[Int] = executeQuery(sparqlString, rdfDirectory, List(rdfFilenamePrefix), rdfFilenameSuffix)
 
-  /**
-    * Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an error on failure
+  /** Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an error on failure
     * @param sparqlString the SPARQL query
     * @param rdfDirectory the RDF output directory
     * @param rdfFilenamePrefixes the prefixes of the RDF output filenames
@@ -61,7 +59,8 @@ object QueryManager {
     sparqlString: String,
     rdfDirectory: Path,
     rdfFilenamePrefixes: List[String],
-    rdfFilenameSuffix: String): Try[Int] =
+    rdfFilenameSuffix: String
+  ): Try[Int] =
     buildQueryAndModel(sparqlString, getRdfFilenames(rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix)) match {
       case Success((query, model)) =>
         Using(QueryExecutionFactory.create(query, model)) { queryExec =>
@@ -86,22 +85,20 @@ object QueryManager {
       case _                   => ""
     }
 
-  private def createCombinedModel(rdfFilename: String, model: Try[Model]): Try[Model] = {
+  private def createCombinedModel(rdfFilename: String, model: Try[Model]): Try[Model] =
     model.flatMap { m1 =>
       Try(RDFDataMgr.loadModel(rdfFilename)).flatMap { m2 =>
         Success(ModelFactory.createUnion(m1, m2))
       }
     }
-  }
 
   private def combine(files: List[String]): Try[Model] = {
     @tailrec
-    def combineModels(files: List[String], model: Try[Model]): Try[Model] = {
+    def combineModels(files: List[String], model: Try[Model]): Try[Model] =
       files match {
-        case Nil => model
+        case Nil          => model
         case head :: tail => combineModels(tail, createCombinedModel(head, model))
       }
-    }
     combineModels(files, Try(ModelFactory.createDefaultModel()))
   }
 

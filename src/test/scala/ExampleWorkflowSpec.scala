@@ -27,11 +27,11 @@ import uk.gov.nationalarchives.pdi.step.jena.model.JenaModelStepMeta
 import uk.gov.nationalarchives.pdi.step.jena.serializer.JenaSerializerStepMeta
 import uk.gov.nationalarchives.pdi.step.jena.shacl.JenaShaclStepMeta
 import uk.gov.nationalarchives.pdi.test.helpers.IOHelper.delete
-import uk.gov.nationalarchives.pdi.test.{DatabaseManager, QueryManager, WorkflowManager}
+import uk.gov.nationalarchives.pdi.test.{ DatabaseManager, QueryManager, WorkflowManager }
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.{ Files, Paths }
 import java.sql.DriverManager
-import scala.util.{Failure, Success, Using}
+import scala.util.{ Failure, Success, Using }
 
 class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
 
@@ -58,7 +58,7 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
 
   "With the given data, the example workflow" must {
     "produce an RDF result file containing exactly two rdfs:label properties" in {
-      val sql: String = {
+      val sql: String =
         """
           |create table tbl_closuretype(closure_type char(1), cltype_desc varchar(255));
           |insert into tbl_closuretype values ('A','Open on Transfer');
@@ -67,10 +67,9 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
           |insert into tbl_item values('A', 0, 19911231, null);
           |insert into tbl_item values('D',1996, null, null)
        """.stripMargin
-      }
       insertData(sql)
 
-      val params : Map[String, String] =
+      val params: Map[String, String] =
         Map(
           "OUTPUT_FILEPATH" -> outputDirectory,
           "OUTPUT_FILENAME" -> s"$resultFilenamePrefix$resultFilenameSuffix",

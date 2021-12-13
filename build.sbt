@@ -31,6 +31,7 @@ lazy val root = Project("kettle-test-framework", file("."))
       )
     ),
     scalacOptions += "-target:jvm-1.8",
+    scalafmtOnCompile := true,
     resolvers ++= Seq(
       Resolver.mavenLocal,
       "PentahoNexus" at "https://nexus.pentaho.org/content/groups/omni"

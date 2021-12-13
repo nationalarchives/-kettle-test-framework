@@ -79,7 +79,12 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
            |?policy a odrl:Policy .
         }""".stripMargin
       val result = QueryManager
-        .executeQuery(sparqlQuery, exampleRdfParentDir, List("output-record-descriptions", "output-record-concepts", "policies"), ".ttl")
+        .executeQuery(
+          sparqlQuery,
+          exampleRdfParentDir,
+          List("output-record-descriptions", "output-record-concepts", "policies"),
+          ".ttl"
+        )
       result.success.value must be(1)
     }
   }
