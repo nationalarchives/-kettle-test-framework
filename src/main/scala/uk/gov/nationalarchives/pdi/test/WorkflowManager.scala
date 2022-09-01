@@ -37,9 +37,26 @@ import scala.jdk.CollectionConverters._
 object WorkflowManager {
 
   /** Executes a Pentaho Kettle transformation with the option of parameters and plugins
+    *
+    * @param transformationIs the InputStream with the Kettle transformation
+    * @param workingDirectory the working directory for the transformation
+    * @param maybeParameters  an optional map of transformation parameters
+    * @param maybePlugins     an optional list of plugin classes to be used
+    * @return
+    */
+  def runTransformation(
+                         transformationIs: InputStream,
+                         workingDirectory: Path,
+                         maybeParameters: Option[Map[String, String]],
+                         maybePlugins: Option[List[Class[_ <: StepMetaInterface]]]
+                       ): Either[Throwable, Boolean] =
+    runTransformation(transformationIs, workingDirectory, maybeParameters, None, maybePlugins)
+
+  /** Executes a Pentaho Kettle transformation with the option of parameters and plugins
     * @param transformationIs the InputStream with the Kettle transformation
     * @param workingDirectory the working directory for the transformation
     * @param maybeParameters an optional map of transformation parameters
+    * @param maybeVariables an optional map of transformation variables
     * @param maybePlugins an optional list of plugin classes to be used
     * @return
     */
@@ -47,6 +64,7 @@ object WorkflowManager {
     transformationIs: InputStream,
     workingDirectory: Path,
     maybeParameters: Option[Map[String, String]],
+    maybeVariables: Option[Map[String, String]],
     maybePlugins: Option[List[Class[_ <: StepMetaInterface]]]
   ): Either[Throwable, Boolean] =
     try {
@@ -61,6 +79,12 @@ object WorkflowManager {
       // set the parameters for the transformation
       val vars = new Variables()
       vars.setVariable("Internal.Entry.Current.Directory", workingDirectory.toAbsolutePath.toString)
+      maybeVariables match {
+        case Some(variables) =>
+          for (variable <- variables)
+            vars.setVariable(variable._1, variable._2)
+        case _ =>
+      }
       val trans = new Trans(new TransMeta(transformationIs, null, false, vars, null))
 
       maybeParameters match {
