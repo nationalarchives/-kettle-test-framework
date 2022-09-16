@@ -44,6 +44,7 @@ object WorkflowManager {
     * @param maybePlugins     an optional list of plugin classes to be used
     * @return
     */
+  @deprecated
   def runTransformation(
                          transformationIs: InputStream,
                          workingDirectory: Path,
@@ -63,9 +64,9 @@ object WorkflowManager {
   def runTransformation(
     transformationIs: InputStream,
     workingDirectory: Path,
-    maybeParameters: Option[Map[String, String]],
-    maybeVariables: Option[Map[String, String]],
-    maybePlugins: Option[List[Class[_ <: StepMetaInterface]]]
+    maybeParameters: Option[Map[String, String]] = None,
+    maybeVariables: Option[Map[String, String]] = None,
+    maybePlugins: Option[List[Class[_ <: StepMetaInterface]]] = None
   ): Either[Throwable, Boolean] =
     try {
       val pluginTypes = maybePlugins match {
