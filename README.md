@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/nationalarchives/kettle-test-framework/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/nationalarchives/kettle-test-framework/actions/workflows/ci.yml)
 [![Scala 2.13](https://img.shields.io/badge/scala-2.13-red.svg)](http://scala-lang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.gov.nationalarchives.pdi/kettle-test-framework/badge.svg)](https://search.maven.org/search?q=g:uk.gov.nationalarchives.pdi)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.gov.nationalarchives.pdi/kettle-test-framework_2.13/badge.svg)](https://search.maven.org/search?q=g:uk.gov.nationalarchives.pdi)
 
 A framework for testing Pentaho Kettle Transformations.
 
@@ -20,14 +20,15 @@ A framework for testing Pentaho Kettle Transformations.
 ```
 git clone https://github.com/nationalarchives/kettle-test-framework.git
 ```
-2. Compile and install to your local Ivy or Maven repository:
+2. Compile and install to your local Ivy or Maven repository (or use the version from [Maven Central](https://search.maven.org/search?q=g:uk.gov.nationalarchives.pdi)):
 ```
 sbt clean compile publishLocal
 ```
 After this other builds on the same machine can depend on it:
 ```
-libraryDependencies += "uk.gov.nationalarchives" %% "kettle-test-framework" % "0.1-SNAPSHOT"
+libraryDependencies += "uk.gov.nationalarchives" %% "kettle-test-framework" % "0.4.0-SNAPSHOT"
 ```
+
 ## Usage
 
 The test framework is designed to allow you to test Pentaho Kettle transformations without needing to have the Pentaho Data Integration tool or an RDBMS installed on the local machine. It achieves by running Pentaho and the H2 database in embedded mode during tests.
@@ -44,4 +45,8 @@ An example test is provided at `src/test/scala/ExampleWorkflowSpec.scala`
 
 To ensure that your Kettle transformations are suitable for testing it is important that they have no dependencies on specific databases or file paths. Such elements should be parameterised in the transformations so that they can be specified at execution time by the test framework.  
 
+## Publishing a Release to Maven Central
 
+1. Run `sbt clean release`
+2. Answer the questions
+3. Login to https://oss.sonatype.org/ then Close, and Release the Staging Repository
