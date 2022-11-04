@@ -1,7 +1,7 @@
 import sbt.Keys.resolvers
 import ReleaseTransformations._
 
-val pentahoVersion = "9.1.0.0-SNAPSHOT"
+val pentahoVersion = "9.1.0.0-324"
 
 ThisBuild / versionScheme := Some("semver-spec")
 
