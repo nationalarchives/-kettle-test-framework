@@ -1,4 +1,5 @@
 import sbt.Keys.resolvers
+import ReleaseTransformations._
 
 val pentahoVersion = "9.1.0.0-SNAPSHOT"
 
@@ -10,7 +11,6 @@ lazy val root = Project("kettle-test-framework", file("."))
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives.pdi",
     name := "kettle-test-framework",
-    version := "0.3.0-SNAPSHOT",
     scalaVersion := "2.13.6",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("https://github.com/nationalarchives/kettle-test-framework")),
@@ -30,7 +30,10 @@ lazy val root = Project("kettle-test-framework", file("."))
         url = url("http://www.devexe.co.uk")
       )
     ),
-    scalacOptions += "-target:jvm-1.8",
+    scalacOptions ++= Seq(
+      "-target:jvm-1.8",
+      "-encoding", "utf-8",
+    ),
     scalafmtOnCompile := true,
     resolvers ++= Seq(
       Resolver.mavenLocal,
@@ -76,5 +79,21 @@ lazy val root = Project("kettle-test-framework", file("."))
         Some("snapshots" at nexus + "content/repositories/snapshots/")
       else
         Some("releases"  at nexus + "service/local/staging/deploy/maven2/")
-    }
+    },
+
+    releaseCrossBuild := false,
+    releaseVersionBump := sbtrelease.Version.Bump.Minor,
+    releaseProcess := Seq[ReleaseStep](
+      checkSnapshotDependencies,
+      inquireVersions,
+      runClean,
+      runTest,
+      setReleaseVersion,
+      commitReleaseVersion,
+      tagRelease,
+      releaseStepCommand("publishSigned"),
+      setNextVersion,
+      commitNextVersion,
+      pushChanges
+    )
   )
