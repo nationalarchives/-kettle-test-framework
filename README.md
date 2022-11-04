@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/nationalarchives/kettle-test-framework/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/nationalarchives/kettle-test-framework/actions/workflows/ci.yml)
 [![Scala 2.13](https://img.shields.io/badge/scala-2.13-red.svg)](http://scala-lang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.gov.nationalarchives.pdi/kettle-test-framework/badge.svg)](https://search.maven.org/search?q=g:uk.gov.nationalarchives.pdi)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.gov.nationalarchives.pdi/kettle-test-framework_2.13/badge.svg)](https://search.maven.org/search?q=g:uk.gov.nationalarchives.pdi)
 
 A framework for testing Pentaho Kettle Transformations.
 
@@ -20,7 +20,7 @@ A framework for testing Pentaho Kettle Transformations.
 ```
 git clone https://github.com/nationalarchives/kettle-test-framework.git
 ```
-2. Compile and install to your local Ivy or Maven repository:
+2. Compile and install to your local Ivy or Maven repository (or use the version from [Maven Central](https://search.maven.org/search?q=g:uk.gov.nationalarchives.pdi)):
 ```
 sbt clean compile publishLocal
 ```
