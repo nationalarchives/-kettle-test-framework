@@ -18,10 +18,10 @@ lazy val root = Project("kettle-test-framework", file("."))
     description := "Kettle Test Framework",
     organizationName := "The National Archives",
     organizationHomepage := Some(url("http://nationalarchives.gov.uk")),
-    scmInfo := Some(ScmInfo(
-      url("https://github.com/nationalarchives/kettle-test-framework"),
-      "scm:git@github.com:nationalarchives/kettle-test-framework.git")
-    ),
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/nationalarchives/kettle-test-framework"),
+        "scm:git@github.com:nationalarchives/kettle-test-framework.git")),
     developers := List(
       Developer(
         id = "rwalpole",
@@ -32,7 +32,8 @@ lazy val root = Project("kettle-test-framework", file("."))
     ),
     scalacOptions ++= Seq(
       "-target:jvm-1.8",
-      "-encoding", "utf-8",
+      "-encoding",
+      "utf-8",
     ),
     scalafmtOnCompile := true,
     resolvers ++= Seq(
@@ -70,7 +71,6 @@ lazy val root = Project("kettle-test-framework", file("."))
     dependencyCheckRubygemsAnalyzerEnabled := Some(false),
     dependencyCheckRetireJSAnalyzerEnabled := Some(false),
     dependencyCheckSwiftEnabled := Some(false),
-
     publishMavenStyle := true,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     publishTo := {
@@ -78,9 +78,8 @@ lazy val root = Project("kettle-test-framework", file("."))
       if (isSnapshot.value)
         Some("snapshots" at nexus + "content/repositories/snapshots/")
       else
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2/")
+        Some("releases" at nexus + "service/local/staging/deploy/maven2/")
     },
-
     releaseCrossBuild := false,
     releaseVersionBump := sbtrelease.Version.Bump.Minor,
     releaseProcess := Seq[ReleaseStep](

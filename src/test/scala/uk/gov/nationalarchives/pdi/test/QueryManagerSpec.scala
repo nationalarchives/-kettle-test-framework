@@ -21,13 +21,21 @@
 
 package uk.gov.nationalarchives.pdi.test
 
+import com.google.common.collect.Lists.newArrayList
+import org.apache.jena.graph.NodeFactory
+import org.apache.jena.iri.IRI
+import org.apache.jena.query.{ QuerySolution, ResultSet }
+import org.apache.jena.rdf.model.{ Model, RDFNode, ResourceFactory }
 import org.apache.jena.riot.RiotException
+import org.mockito.Mockito.when
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import uk.gov.nationalarchives.pdi.step.jena.JenaUtil
 
 import java.nio.file.Paths
+import scala.jdk.CollectionConverters.IteratorHasAsScala
 
 class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
@@ -86,6 +94,67 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
           ".ttl"
         )
       result.success.value must be(1)
+    }
+  }
+
+  "QueryManager.parseResultSet" must {
+    "return a non-empty RecordSet when ResultSet contains at least a row" in {
+
+      val mockResultSet = mock[ResultSet]
+      val mockQuerySolution = mock[QuerySolution]
+      val mockQuerySolution2 = mock[QuerySolution]
+      val mockRDFNodeVal1 = mock[RDFNode]
+      val mockRDFNodeVal2 = mock[RDFNode]
+      val mockRDFNodeVal3 = mock[RDFNode]
+      val mockRDFNodeVal4 = mock[RDFNode]
+
+      when(mockResultSet.hasNext) thenReturn true thenReturn true thenReturn false
+      when(mockResultSet.getResultVars) thenReturn newArrayList("col1", "col2")
+      when(mockResultSet.nextSolution()) thenReturn mockQuerySolution thenReturn mockQuerySolution2
+      when(mockResultSet.next()) thenReturn mockQuerySolution thenReturn mockQuerySolution2
+      when(mockQuerySolution.get("col1")) thenReturn mockRDFNodeVal1
+      when(mockQuerySolution.get("col2")) thenReturn mockRDFNodeVal2
+      when(mockRDFNodeVal1.asLiteral()) thenReturn ResourceFactory.createPlainLiteral("val1")
+      when(mockRDFNodeVal2.asLiteral()) thenReturn ResourceFactory.createPlainLiteral("val2")
+      when(mockQuerySolution2.get("col1")) thenReturn mockRDFNodeVal3
+      when(mockQuerySolution2.get("col2")) thenReturn mockRDFNodeVal4
+      when(mockRDFNodeVal3.asLiteral()) thenReturn ResourceFactory.createPlainLiteral("val3")
+      when(mockRDFNodeVal4.asLiteral()) thenReturn ResourceFactory.createPlainLiteral("val4")
+
+      val result = QueryManager.parseResultSet(mockResultSet)
+
+      result.results.size must be(2)
+      //validate Row 1
+      val resultRow1 = result.results(0)
+      val value1: RDFNode = resultRow1.get("col1").get.asInstanceOf[RDFNode]
+      value1.asLiteral.getString must be("val1")
+      val value2: RDFNode = resultRow1.get("col2").get.asInstanceOf[RDFNode]
+      value2.asLiteral.getString must be("val2")
+      //validate Row 2
+      val resultRow2 = result.results(1)
+      val value3: RDFNode = resultRow2.get("col1").get.asInstanceOf[RDFNode]
+      value3.asLiteral.getString must be("val3")
+      val value4: RDFNode = resultRow2.get("col2").get.asInstanceOf[RDFNode]
+      value4.asLiteral.getString must be("val4")
+    }
+
+    "return a empty RecordSet when ResultSet contains no rows" in {
+
+      val mockResultSet = mock[ResultSet]
+      val mockQuerySolution = mock[QuerySolution]
+      val mockQuerySolution2 = mock[QuerySolution]
+      val mockRDFNodeVal1 = mock[RDFNode]
+      val mockRDFNodeVal2 = mock[RDFNode]
+      val mockRDFNodeVal3 = mock[RDFNode]
+      val mockRDFNodeVal4 = mock[RDFNode]
+
+      when(mockResultSet.hasNext) thenReturn false
+      when(mockResultSet.getResultVars) thenReturn null
+
+      val result = QueryManager.parseResultSet(mockResultSet)
+
+      result.results.size must be(0)
+
     }
   }
 

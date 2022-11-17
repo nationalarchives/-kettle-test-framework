@@ -46,11 +46,11 @@ object WorkflowManager {
     */
   @deprecated
   def runTransformation(
-                         transformationIs: InputStream,
-                         workingDirectory: Path,
-                         maybeParameters: Option[Map[String, String]],
-                         maybePlugins: Option[List[Class[_ <: StepMetaInterface]]]
-                       ): Either[Throwable, Boolean] =
+    transformationIs: InputStream,
+    workingDirectory: Path,
+    maybeParameters: Option[Map[String, String]],
+    maybePlugins: Option[List[Class[_ <: StepMetaInterface]]]
+  ): Either[Throwable, Boolean] =
     runTransformation(transformationIs, workingDirectory, maybeParameters, None, maybePlugins)
 
   /** Executes a Pentaho Kettle transformation with the option of parameters and plugins

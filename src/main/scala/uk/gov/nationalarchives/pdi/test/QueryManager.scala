@@ -28,11 +28,16 @@ import uk.gov.nationalarchives.pdi.test.helpers.IOHelper.findFile
 
 import java.nio.file.Path
 import scala.annotation.tailrec
+import scala.collection.mutable
 import scala.util.{ Failure, Success, Try, Using }
+import org.apache.jena.query.QuerySolution
+import scala.jdk.CollectionConverters._
 
 /** Used to execute SPARQL queries against RDF files output by Pentaho Kettle during transformation testing
   */
 object QueryManager {
+
+  case class RecordSet(results: List[Map[String, Object]])
 
   /** Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an error on failure
     * @param sparqlString the SPARQL query
@@ -61,17 +66,61 @@ object QueryManager {
     rdfFilenamePrefixes: List[String],
     rdfFilenameSuffix: String
   ): Try[Int] =
+    getResultSet(sparqlString, rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix).map(rs => rs.size)
+
+  /** Executes the given SPARQL query against the given RDF file and returns a sequence containing
+    * the table of the result if successful or an error on failure
+    *
+    * @param sparqlString        the SPARQL query
+    * @param rdfDirectory        the RDF output directory
+    * @param rdfFilenamePrefixes the prefixes of the RDF output filenames
+    * @param rdfFilenameSuffix   the suffix of the RDF output filename
+    * @return
+    */
+  def executeQueryAndGetRecordSet(
+    sparqlString: String,
+    rdfDirectory: Path,
+    rdfFilenamePrefixes: List[String],
+    rdfFilenameSuffix: String
+  ): Try[RecordSet] =
+    getResultSet(sparqlString, rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix).map(rs => parseResultSet(rs))
+
+  def getResultSet(
+    sparqlString: String,
+    rdfDirectory: Path,
+    rdfFilenamePrefixes: List[String],
+    rdfFilenameSuffix: String
+  ): Try[ResultSetRewindable] =
     buildQueryAndModel(sparqlString, getRdfFilenames(rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix)) match {
       case Success((query, model)) =>
         Using(QueryExecutionFactory.create(query, model)) { queryExec =>
           val results = queryExec.execSelect
-          val rs = ResultSetFactory.copyResults(results)
-          rs.size()
+          ResultSetFactory.copyResults(results)
         }
       case Failure(e) => Failure(e)
     }
 
-  private def buildQueryAndModel(sparqlString: String, rdfFilenames: List[String]): Try[(Query, Model)] = {
+  def parseResultSet(resultSet: ResultSet): RecordSet = {
+
+    val resultVars = resultSet.getResultVars
+    val columnNames: List[String] = {
+      if (resultVars != null && !resultVars.isEmpty)
+        resultSet.getResultVars.asScala.toList
+      else List[String]()
+    }
+
+    val querySolutionList: List[QuerySolution] = resultSet.asScala.toList
+    val table =
+      for {
+        querySolution <- querySolutionList
+      } yield for {
+        columnName <- columnNames
+      } yield (columnName, querySolution.get(columnName))
+
+    RecordSet(table.map(_.toMap))
+  }
+
+  private def buildQueryAndModel(sparqlString: String, rdfFilenames: List[String]) = {
     val query = Try(QueryFactory.create(sparqlString))
     combine(rdfFilenames).flatMap(m => query.flatMap(q => Try(q, m)))
   }
