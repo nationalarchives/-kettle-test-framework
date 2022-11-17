@@ -79,7 +79,8 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
       val workflowFile = Paths.get(this.getClass.getClassLoader.getResource(exampleWorkflow).toURI)
       val workflowParentDir = workflowFile.getParent
       Using(Files.newInputStream(workflowFile)) { workflowInputStream =>
-        val _ = WorkflowManager.runTransformation(workflowInputStream, workflowParentDir, Some(params), Some(plugins))
+        val _ =
+          WorkflowManager.runTransformation(workflowInputStream, workflowParentDir, Some(params), None, Some(plugins))
       }
       val result = QueryManager.executeQuery(
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label ?label. }",
