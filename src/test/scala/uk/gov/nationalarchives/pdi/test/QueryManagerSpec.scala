@@ -62,18 +62,17 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       //validate Row 1
       val resultRow1 = result.get.contents(0)
-      val value1: RDFNode = resultRow1.get("policy").get.asInstanceOf[RDFNode]
-
+      val value1: RDFNode = resultRow1.get("policy").get
       value1.asResource must be(
         ResourceFactory.createResource("http://cat.nationalarchives.gov.uk/policy.Retained_Until_1996"))
-      val value2: RDFNode = resultRow1.get("label").get.asInstanceOf[RDFNode]
+      val value2: RDFNode = resultRow1.get("label").get
       value2.asLiteral.getString must be("Retained Until 1996")
       //validate Row 2
       val resultRow2 = result.get.contents(1)
-      val value3: RDFNode = resultRow2.get("policy").get.asInstanceOf[RDFNode]
+      val value3: RDFNode = resultRow2.get("policy").get
       value3.asResource() must be(
         ResourceFactory.createResource("http://cat.nationalarchives.gov.uk/policy.Open_on_Transfer_1991-12-31"))
-      val value4: RDFNode = resultRow2.get("label").get.asInstanceOf[RDFNode]
+      val value4: RDFNode = resultRow2.get("label").get
       value4.asLiteral.getString must be("Open on Transfer 1991-12-31")
     }
     "return a Success getting a RecordSet with no results when the query yields 0 results" in {
@@ -81,17 +80,6 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val exampleRdfParentDir = exampleRdfFile.getParent
       val sparqlQuery =
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label2 ?label . }"
-      val result: Try[QueryManager.RecordSet] =
-        QueryManager.executeQueryAndGetRecordSet(sparqlQuery, exampleRdfParentDir, List("example"), ".ttl")
-
-      //assert size
-      result.success.value.contents.size must be(0)
-    }
-    "return a Success getting a RecordSet with no results when the query returns but is not bound" in {
-      val exampleRdfFile = Paths.get(this.getClass.getClassLoader.getResource("example.ttl").toURI)
-      val exampleRdfParentDir = exampleRdfFile.getParent
-      val sparqlQuery =
-        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?not-bound WHERE { ?policy rdfs:label ?label . }"
       val result: Try[QueryManager.RecordSet] =
         QueryManager.executeQueryAndGetRecordSet(sparqlQuery, exampleRdfParentDir, List("example"), ".ttl")
 
@@ -176,15 +164,15 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       result.contents.size must be(2)
       //validate Row 1
       val resultRow1 = result.contents(0)
-      val value1: RDFNode = resultRow1.get("col1").get.asInstanceOf[RDFNode]
+      val value1: RDFNode = resultRow1.get("col1").get
       value1.asLiteral.getString must be("val1")
-      val value2: RDFNode = resultRow1.get("col2").get.asInstanceOf[RDFNode]
+      val value2: RDFNode = resultRow1.get("col2").get
       value2.asLiteral.getString must be("val2")
       //validate Row 2
       val resultRow2 = result.contents(1)
-      val value3: RDFNode = resultRow2.get("col1").get.asInstanceOf[RDFNode]
+      val value3: RDFNode = resultRow2.get("col1").get
       value3.asLiteral.getString must be("val3")
-      val value4: RDFNode = resultRow2.get("col2").get.asInstanceOf[RDFNode]
+      val value4: RDFNode = resultRow2.get("col2").get
       value4.asLiteral.getString must be("val4")
     }
 
