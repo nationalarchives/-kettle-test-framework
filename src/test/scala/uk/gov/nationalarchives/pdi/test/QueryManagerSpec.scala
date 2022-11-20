@@ -64,14 +64,16 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val resultRow1 = result.get.contents(0)
       val value1: RDFNode = resultRow1.get("policy").get
       value1.asResource must be(
-        ResourceFactory.createResource("http://cat.nationalarchives.gov.uk/policy.Retained_Until_1996"))
+        ResourceFactory.createResource("http://cat.nationalarchives.gov.uk/policy.Retained_Until_1996")
+      )
       val value2: RDFNode = resultRow1.get("label").get
       value2.asLiteral.getString must be("Retained Until 1996")
       //validate Row 2
       val resultRow2 = result.get.contents(1)
       val value3: RDFNode = resultRow2.get("policy").get
       value3.asResource() must be(
-        ResourceFactory.createResource("http://cat.nationalarchives.gov.uk/policy.Open_on_Transfer_1991-12-31"))
+        ResourceFactory.createResource("http://cat.nationalarchives.gov.uk/policy.Open_on_Transfer_1991-12-31")
+      )
       val value4: RDFNode = resultRow2.get("label").get
       value4.asLiteral.getString must be("Open on Transfer 1991-12-31")
     }

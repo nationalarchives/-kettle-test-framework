@@ -67,7 +67,7 @@ object QueryManager {
     rdfFilenamePrefixes: List[String],
     rdfFilenameSuffix: String
   ): Try[Int] =
-    getResultSet(sparqlString, rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix).map(rs => rs.size)
+    executeQueryAndGetResultSet(sparqlString, rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix).map(rs => rs.size)
 
   /** Executes the given SPARQL query against the given RDF file and returns a sequence containing
     * the table of the result if successful or an error on failure
@@ -85,7 +85,8 @@ object QueryManager {
     rdfFilenameSuffix: String
   ): Try[RecordSet] =
     executeQueryAndGetResultSet(sparqlString, rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix).map(rs =>
-      parseResultSet(rs))
+      parseResultSet(rs)
+    )
 
   /** Executes the given SPARQL query against the given RDF file and returns the raw ResultSet object provided by
     * jena.
@@ -130,10 +131,9 @@ object QueryManager {
     val table =
       for {
         querySolution <- querySolutionList
-      } yield
-        for {
-          columnName <- columnNames
-        } yield (columnName, querySolution.get(columnName))
+      } yield for {
+        columnName <- columnNames
+      } yield (columnName, querySolution.get(columnName))
 
     RecordSet(table.map(_.toMap))
   }
