@@ -28,14 +28,17 @@ import scala.util.{ Try, Using }
 
 object IOHelper {
 
-  /** Find a file within a directory.
-    * Does not check sub-directories.
+  /** Find a file within a directory. Does not check sub-directories.
     *
-    * @param directory the directory to search
-    * @param prefix a prefix of the filename to match
-    * @param suffix a suffix of the filename to match
+    * @param directory
+    *   the directory to search
+    * @param prefix
+    *   a prefix of the filename to match
+    * @param suffix
+    *   a suffix of the filename to match
     *
-    * @return The path of the matching file
+    * @return
+    *   The path of the matching file
     */
   def findFile(directory: Path, prefix: String, suffix: String): Try[Option[Path]] =
     Using(
@@ -54,8 +57,7 @@ object IOHelper {
       use.findFirst().map(Option(_)).orElse(Option.empty[Path])
     }
 
-  /** Visits a directory tree deleting all
-    * files and folders recursively.
+  /** Visits a directory tree deleting all files and folders recursively.
     */
   private class DeleteDirVisitor extends SimpleFileVisitor[Path] {
     @throws[IOException]
@@ -76,7 +78,8 @@ object IOHelper {
 
   /** Deletes a directory and everything within it
     *
-    * @param the directory to delete
+    * @param the
+    *   directory to delete
     */
   @throws[IOException]
   def delete(path: Path): Unit =

@@ -37,11 +37,16 @@ import scala.jdk.CollectionConverters._
 object WorkflowManager {
 
   /** Executes a Pentaho Kettle transformation with the option of parameters, variables and plugins
-    * @param transformationIs the InputStream with the Kettle transformation
-    * @param workingDirectory the working directory for the transformation
-    * @param maybeParameters an optional map of transformation parameters
-    * @param maybeVariables an optional map of transformation variables
-    * @param maybePlugins an optional list of plugin classes to be used
+    * @param transformationIs
+    *   the InputStream with the Kettle transformation
+    * @param workingDirectory
+    *   the working directory for the transformation
+    * @param maybeParameters
+    *   an optional map of transformation parameters
+    * @param maybeVariables
+    *   an optional map of transformation variables
+    * @param maybePlugins
+    *   an optional list of plugin classes to be used
     * @return
     */
   def runTransformation(
