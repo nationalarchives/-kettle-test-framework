@@ -22,17 +22,23 @@
 package uk.gov.nationalarchives.pdi.test
 
 import org.apache.jena.query._
-import org.apache.jena.rdf.model.{ Model, ModelFactory }
+import org.apache.jena.rdf.model.{ Model, ModelFactory, RDFNode }
 import org.apache.jena.riot._
 import uk.gov.nationalarchives.pdi.test.helpers.IOHelper.findFile
 
 import java.nio.file.Path
 import scala.annotation.tailrec
+import scala.collection.mutable
 import scala.util.{ Failure, Success, Try, Using }
+import org.apache.jena.query.QuerySolution
+
+import scala.jdk.CollectionConverters._
 
 /** Used to execute SPARQL queries against RDF files output by Pentaho Kettle during transformation testing
   */
 object QueryManager {
+
+  case class RecordSet(contents: List[Map[String, RDFNode]])
 
   /** Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an
     * error on failure
@@ -71,17 +77,88 @@ object QueryManager {
     rdfFilenamePrefixes: List[String],
     rdfFilenameSuffix: String
   ): Try[Int] =
+    executeQueryAndGetResultSet(sparqlString, rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix).map(rs => rs.size)
+
+  /** Executes the given SPARQL query against the given RDF file and returns a sequence containing the table of the
+    * result if successful or an error on failure
+    *
+    * @param sparqlString
+    *   the SPARQL query
+    * @param rdfDirectory
+    *   the RDF output directory
+    * @param rdfFilenamePrefixes
+    *   the prefixes of the RDF output filenames
+    * @param rdfFilenameSuffix
+    *   the suffix of the RDF output filename
+    * @return
+    *   a RecordSet object that contains a List[Map[String, RDFNode]] with the complete mapping of the result.
+    */
+  def executeQueryAndGetRecordSet(
+    sparqlString: String,
+    rdfDirectory: Path,
+    rdfFilenamePrefixes: List[String],
+    rdfFilenameSuffix: String
+  ): Try[RecordSet] =
+    executeQueryAndGetResultSet(sparqlString, rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix).map(rs =>
+      parseResultSet(rs)
+    )
+
+  /** Executes the given SPARQL query against the given RDF file and returns the raw ResultSet object provided by jena.
+    *
+    * @param sparqlString
+    *   the SPARQL query
+    * @param rdfDirectory
+    *   the RDF output directory
+    * @param rdfFilenamePrefixes
+    *   the prefixes of the RDF output filenames
+    * @param rdfFilenameSuffix
+    *   the suffix of the RDF output filename
+    * @return
+    *   a jena ResultSet object
+    */
+  def executeQueryAndGetResultSet(
+    sparqlString: String,
+    rdfDirectory: Path,
+    rdfFilenamePrefixes: List[String],
+    rdfFilenameSuffix: String
+  ): Try[ResultSetRewindable] =
     buildQueryAndModel(sparqlString, getRdfFilenames(rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix)) match {
       case Success((query, model)) =>
         Using(QueryExecutionFactory.create(query, model)) { queryExec =>
           val results = queryExec.execSelect
-          val rs = ResultSetFactory.copyResults(results)
-          rs.size()
+          ResultSetFactory.copyResults(results)
         }
       case Failure(e) => Failure(e)
     }
 
-  private def buildQueryAndModel(sparqlString: String, rdfFilenames: List[String]): Try[(Query, Model)] = {
+  /** Traverses a jena ResultSet object to obtain a mapping as a list of maps containing the values per row and column.
+    * Each key in the resulting maps is named after each of the columns per row.
+    *
+    * @param resultSet
+    *   a jena ResultSet object obtained from executing a query
+    * @return
+    *   a RecordSet object that contains a List[Map[String, RDFNode]] with the complete mapping of the result.
+    */
+  def parseResultSet(resultSet: ResultSet): RecordSet = {
+
+    val resultVars = resultSet.getResultVars
+    val columnNames: List[String] =
+      if (resultVars != null && !resultVars.isEmpty)
+        resultSet.getResultVars.asScala.toList
+      else List[String]()
+
+    val querySolutionList: List[QuerySolution] = resultSet.asScala.toList
+    val table =
+      for {
+        querySolution <- querySolutionList
+      } yield for {
+        columnName <- columnNames
+      } yield (columnName, querySolution.get(columnName))
+
+    RecordSet(table.map(_.toMap))
+  }
+
+  private def buildQueryAndModel(sparqlString: String, rdfFilenames: List[String]) = {
     val query = Try(QueryFactory.create(sparqlString))
     combine(rdfFilenames).flatMap(m => query.flatMap(q => Try(q, m)))
   }
