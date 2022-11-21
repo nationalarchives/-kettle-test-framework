@@ -58,10 +58,10 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val result: Try[QueryManager.RecordSet] =
         QueryManager.executeQueryAndGetRecordSet(sparqlQuery, exampleRdfParentDir, List("example"), ".ttl")
 
-      //assert size
+      // assert size
       result.success.value.contents.size must be(2)
 
-      //validate Row 1
+      // validate Row 1
       val resultRow1 = result.get.contents(0)
       val value1: RDFNode = resultRow1.get("policy").get
       value1.asResource must be(
@@ -69,7 +69,7 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       )
       val value2: RDFNode = resultRow1.get("label").get
       value2.asLiteral.getString must be("Retained Until 1996")
-      //validate Row 2
+      // validate Row 2
       val resultRow2 = result.get.contents(1)
       val value3: RDFNode = resultRow2.get("policy").get
       value3.asResource() must be(
@@ -86,7 +86,7 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val result: Try[ResultSetRewindable] =
         QueryManager.executeQueryAndGetResultSet(sparqlQuery, exampleRdfParentDir, List("example"), ".ttl")
 
-      //assert size
+      // assert size
       result.success.value.size must be(2)
 
       val resultSetStrings: util.List[String] = util.Arrays.asList(
@@ -116,7 +116,7 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val result =
         QueryManager.executeQueryAndGetRecordSet(sparqlQuery, exampleRdfParentDir, List("example"), ".ttl")
 
-      //assert size
+      // assert size
       result.success.value.contents.size must be(0)
     }
     "return a Failure with an Exception" in {
@@ -195,13 +195,13 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val result = QueryManager.parseResultSet(mockResultSet)
 
       result.contents.size must be(2)
-      //validate Row 1
+      // validate Row 1
       val resultRow1 = result.contents(0)
       val value1: RDFNode = resultRow1.get("col1").get
       value1.asLiteral.getString must be("val1")
       val value2: RDFNode = resultRow1.get("col2").get
       value2.asLiteral.getString must be("val2")
-      //validate Row 2
+      // validate Row 2
       val resultRow2 = result.contents(1)
       val value3: RDFNode = resultRow2.get("col1").get
       value3.asLiteral.getString must be("val3")

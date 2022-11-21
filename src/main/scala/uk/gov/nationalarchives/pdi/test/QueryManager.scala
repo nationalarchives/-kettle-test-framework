@@ -77,14 +77,19 @@ object QueryManager {
   ): Try[Int] =
     executeQueryAndGetResultSet(sparqlString, rdfDirectory, rdfFilenamePrefixes, rdfFilenameSuffix).map(rs => rs.size)
 
-  /** Executes the given SPARQL query against the given RDF file and returns a sequence containing
-    * the table of the result if successful or an error on failure
+  /** Executes the given SPARQL query against the given RDF file and returns a sequence containing the table of the
+    * result if successful or an error on failure
     *
-    * @param sparqlString        the SPARQL query
-    * @param rdfDirectory        the RDF output directory
-    * @param rdfFilenamePrefixes the prefixes of the RDF output filenames
-    * @param rdfFilenameSuffix   the suffix of the RDF output filename
-    * @return a RecordSet object that contains a List[Map[String, RDFNode]] with the complete mapping of the result.
+    * @param sparqlString
+    *   the SPARQL query
+    * @param rdfDirectory
+    *   the RDF output directory
+    * @param rdfFilenamePrefixes
+    *   the prefixes of the RDF output filenames
+    * @param rdfFilenameSuffix
+    *   the suffix of the RDF output filename
+    * @return
+    *   a RecordSet object that contains a List[Map[String, RDFNode]] with the complete mapping of the result.
     */
   def executeQueryAndGetRecordSet(
     sparqlString: String,
@@ -96,14 +101,18 @@ object QueryManager {
       parseResultSet(rs)
     )
 
-  /** Executes the given SPARQL query against the given RDF file and returns the raw ResultSet object provided by
-    * jena.
+  /** Executes the given SPARQL query against the given RDF file and returns the raw ResultSet object provided by jena.
     *
-    * @param sparqlString        the SPARQL query
-    * @param rdfDirectory        the RDF output directory
-    * @param rdfFilenamePrefixes the prefixes of the RDF output filenames
-    * @param rdfFilenameSuffix   the suffix of the RDF output filename
-    * @return a jena ResultSet object
+    * @param sparqlString
+    *   the SPARQL query
+    * @param rdfDirectory
+    *   the RDF output directory
+    * @param rdfFilenamePrefixes
+    *   the prefixes of the RDF output filenames
+    * @param rdfFilenameSuffix
+    *   the suffix of the RDF output filename
+    * @return
+    *   a jena ResultSet object
     */
   def executeQueryAndGetResultSet(
     sparqlString: String,
@@ -121,19 +130,20 @@ object QueryManager {
     }
 
   /** Traverses a jena ResultSet object to obtain a mapping as a list of maps containing the values per row and column.
-    * Each key in the resulting maps  is named after each of the columns per row.
+    * Each key in the resulting maps is named after each of the columns per row.
     *
-    * @param resultSet        a jena ResultSet object obtained from executing a query
-    * @return a RecordSet object that contains a List[Map[String, RDFNode]] with the complete mapping of the result.
+    * @param resultSet
+    *   a jena ResultSet object obtained from executing a query
+    * @return
+    *   a RecordSet object that contains a List[Map[String, RDFNode]] with the complete mapping of the result.
     */
   def parseResultSet(resultSet: ResultSet): RecordSet = {
 
     val resultVars = resultSet.getResultVars
-    val columnNames: List[String] = {
+    val columnNames: List[String] =
       if (resultVars != null && !resultVars.isEmpty)
         resultSet.getResultVars.asScala.toList
       else List[String]()
-    }
 
     val querySolutionList: List[QuerySolution] = resultSet.asScala.toList
     val table =
