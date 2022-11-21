@@ -18,9 +18,11 @@ lazy val root = Project("kettle-test-framework", file("."))
     description := "Kettle Test Framework",
     organizationName := "The National Archives",
     organizationHomepage := Some(url("http://nationalarchives.gov.uk")),
-    scmInfo := Some(ScmInfo(
-      url("https://github.com/nationalarchives/kettle-test-framework"),
-      "scm:git@github.com:nationalarchives/kettle-test-framework.git")
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/nationalarchives/kettle-test-framework"),
+        "scm:git@github.com:nationalarchives/kettle-test-framework.git"
+      )
     ),
     developers := List(
       Developer(
@@ -32,9 +34,9 @@ lazy val root = Project("kettle-test-framework", file("."))
     ),
     scalacOptions ++= Seq(
       "-target:jvm-1.8",
-      "-encoding", "utf-8",
+      "-encoding",
+      "utf-8"
     ),
-    scalafmtOnCompile := true,
     resolvers ++= Seq(
       Resolver.mavenLocal,
       "PentahoNexus" at "https://nexus.pentaho.org/content/groups/omni"
@@ -45,14 +47,14 @@ lazy val root = Project("kettle-test-framework", file("."))
       "pentaho-kettle"              % "kettle-engine"         % pentahoVersion,
       "org.pentaho.di.plugins"      % "pdi-core-plugins-impl" % pentahoVersion,
       "org.apache.jena"             % "apache-jena-libs"      % "3.17.0",
-      "org.slf4j"                   % "slf4j-simple"          % "1.7.32" % Test,
-      "com.h2database"              % "h2"                    % "1.4.200" % Test,
-      "uk.gov.nationalarchives.pdi" % "kettle-jena-plugins"   % "2.2.1" % Test,
+      "org.slf4j"                   % "slf4j-simple"          % "1.7.32"       % Test,
+      "com.h2database"              % "h2"                    % "1.4.200"      % Test,
+      "uk.gov.nationalarchives.pdi" % "kettle-jena-plugins"   % "2.2.1"        % Test,
       "pentaho-kettle"              % "kettle-engine"         % pentahoVersion % Test classifier "tests",
       "pentaho-kettle"              % "kettle-core"           % pentahoVersion % Test classifier "tests",
-      "org.scalatest"               %% "scalatest"            % "3.2.10" % Test,
-      "org.scalatestplus"           %% "mockito-3-4"          % "3.2.10.0" % Test,
-      "commons-io"                  % "commons-io"            % "2.11.0" % Test
+      "org.scalatest"              %% "scalatest"             % "3.2.10"       % Test,
+      "org.scalatestplus"          %% "mockito-3-4"           % "3.2.10.0"     % Test,
+      "commons-io"                  % "commons-io"            % "2.11.0"       % Test
     ),
     dependencyCheckArchiveAnalyzerEnabled := Some(false),
     dependencyCheckAssemblyAnalyzerEnabled := Some(false),
@@ -70,7 +72,6 @@ lazy val root = Project("kettle-test-framework", file("."))
     dependencyCheckRubygemsAnalyzerEnabled := Some(false),
     dependencyCheckRetireJSAnalyzerEnabled := Some(false),
     dependencyCheckSwiftEnabled := Some(false),
-
     publishMavenStyle := true,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     publishTo := {
@@ -78,9 +79,8 @@ lazy val root = Project("kettle-test-framework", file("."))
       if (isSnapshot.value)
         Some("snapshots" at nexus + "content/repositories/snapshots/")
       else
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2/")
+        Some("releases" at nexus + "service/local/staging/deploy/maven2/")
     },
-
     releaseCrossBuild := false,
     releaseVersionBump := sbtrelease.Version.Bump.Minor,
     releaseProcess := Seq[ReleaseStep](

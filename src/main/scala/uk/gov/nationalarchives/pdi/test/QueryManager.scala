@@ -34,11 +34,16 @@ import scala.util.{ Failure, Success, Try, Using }
   */
 object QueryManager {
 
-  /** Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an error on failure
-    * @param sparqlString the SPARQL query
-    * @param rdfDirectory the RDF output directory
-    * @param rdfFilenamePrefix the prefix of the RDF output filename
-    * @param rdfFilenameSuffix the suffix of the RDF output filename
+  /** Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an
+    * error on failure
+    * @param sparqlString
+    *   the SPARQL query
+    * @param rdfDirectory
+    *   the RDF output directory
+    * @param rdfFilenamePrefix
+    *   the prefix of the RDF output filename
+    * @param rdfFilenameSuffix
+    *   the suffix of the RDF output filename
     * @return
     */
   def executeQuery(
@@ -48,11 +53,16 @@ object QueryManager {
     rdfFilenameSuffix: String
   ): Try[Int] = executeQuery(sparqlString, rdfDirectory, List(rdfFilenamePrefix), rdfFilenameSuffix)
 
-  /** Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an error on failure
-    * @param sparqlString the SPARQL query
-    * @param rdfDirectory the RDF output directory
-    * @param rdfFilenamePrefixes the prefixes of the RDF output filenames
-    * @param rdfFilenameSuffix the suffix of the RDF output filename
+  /** Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an
+    * error on failure
+    * @param sparqlString
+    *   the SPARQL query
+    * @param rdfDirectory
+    *   the RDF output directory
+    * @param rdfFilenamePrefixes
+    *   the prefixes of the RDF output filenames
+    * @param rdfFilenameSuffix
+    *   the suffix of the RDF output filename
     * @return
     */
   def executeQuery(
