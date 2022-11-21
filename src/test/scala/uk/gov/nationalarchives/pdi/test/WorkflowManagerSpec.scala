@@ -36,9 +36,9 @@ import scala.util.Using
 
 class WorkflowManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
-  private val simpleWorkflow = "simple.ktr"
+  private val simpleWorkflow = "simple-using-variable.ktr"
   private val notAWorkflow = "example.ttl"
-
+  private val vars: Map[String, String] = Map("title" -> "Test")
   private val plugins: List[Class[_ <: StepMetaInterface]] = List(
     classOf[JenaModelStepMeta],
     classOf[JenaSerializerStepMeta],
@@ -52,7 +52,7 @@ class WorkflowManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val workflowFile = Paths.get(this.getClass.getClassLoader.getResource(simpleWorkflow).toURI)
       val workflowParentDir = workflowFile.getParent
       Using(Files.newInputStream(workflowFile)) { is =>
-        val result = WorkflowManager.runTransformation(is, workflowParentDir, None, Some(plugins))
+        val result = WorkflowManager.runTransformation(is, workflowParentDir, None, Some(vars), Some(plugins))
         result mustBe Right(true)
       }
     }
