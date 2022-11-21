@@ -38,6 +38,8 @@ import scala.jdk.CollectionConverters._
   */
 object QueryManager {
 
+  case class RecordSet(contents: List[Map[String, RDFNode]])
+
   /** Executes the given SPARQL query against the given RDF file and returns the size of the result if successful or an
     * error on failure
     * @param sparqlString
