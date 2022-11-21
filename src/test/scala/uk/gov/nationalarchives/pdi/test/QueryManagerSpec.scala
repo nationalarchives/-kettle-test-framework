@@ -22,20 +22,21 @@
 package uk.gov.nationalarchives.pdi.test
 
 import com.google.common.collect.Lists.newArrayList
-import org.apache.jena.graph.NodeFactory
-import org.apache.jena.iri.IRI
-import org.apache.jena.query.{ QuerySolution, ResultSet }
+import org.apache.jena.atlas.lib.StrUtils
+import org.apache.jena.query.{ QuerySolution, ResultSet, ResultSetFactory, ResultSetRewindable }
 import org.apache.jena.rdf.model.{ Model, RDFNode, ResourceFactory }
 import org.apache.jena.riot.RiotException
+import org.apache.jena.sparql.resultset.ResultSetCompare
+import org.apache.jena.sparql.sse.{ Item, SSE }
 import org.mockito.Mockito.when
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.nationalarchives.pdi.step.jena.JenaUtil
+import org.apache.jena.sparql.sse.builders.BuilderResultSet
 
 import java.nio.file.Paths
-import scala.jdk.CollectionConverters.IteratorHasAsScala
+import java.util
 import scala.util.Try
 
 class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
@@ -77,12 +78,42 @@ class QueryManagerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val value4: RDFNode = resultRow2.get("label").get
       value4.asLiteral.getString must be("Open on Transfer 1991-12-31")
     }
+    "return a Success getting a ResultSet" in {
+      val exampleRdfFile = Paths.get(this.getClass.getClassLoader.getResource("example.ttl").toURI)
+      val exampleRdfParentDir = exampleRdfFile.getParent
+      val sparqlQuery =
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label ?label . }"
+      val result: Try[ResultSetRewindable] =
+        QueryManager.executeQueryAndGetResultSet(sparqlQuery, exampleRdfParentDir, List("example"), ".ttl")
+
+      //assert size
+      result.success.value.size must be(2)
+
+      val resultSetStrings: util.List[String] = util.Arrays.asList(
+        "(resultset (?policy ?label)",
+        " (row (?policy <http://cat.nationalarchives.gov.uk/policy.Retained_Until_1996>) (?label \"Retained Until 1996\"))",
+        " (row (?policy <http://cat.nationalarchives.gov.uk/policy.Open_on_Transfer_1991-12-31>) (?label \"Open on Transfer 1991-12-31\"))",
+        ")"
+      );
+
+      val expectedResultSet: ResultSetRewindable = createResultSet(resultSetStrings)
+
+      ResultSetCompare.equalsByValue(result.success.value, expectedResultSet) must be(true)
+    }
+
+    def createResultSet(strings: util.List[String]) = {
+      if (strings.size() == 0) throw new IllegalArgumentException
+      val x = StrUtils.strjoinNL(strings)
+      val item = SSE.parse(x)
+      ResultSetFactory.makeRewindable(BuilderResultSet.build(item))
+    }
+
     "return a Success getting a RecordSet with no results when the query yields 0 results" in {
       val exampleRdfFile = Paths.get(this.getClass.getClassLoader.getResource("example.ttl").toURI)
       val exampleRdfParentDir = exampleRdfFile.getParent
       val sparqlQuery =
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?policy ?label WHERE { ?policy rdfs:label2 ?label . }"
-      val result: Try[QueryManager.RecordSet] =
+      val result =
         QueryManager.executeQueryAndGetRecordSet(sparqlQuery, exampleRdfParentDir, List("example"), ".ttl")
 
       //assert size
