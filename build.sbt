@@ -11,7 +11,7 @@ lazy val root = Project("kettle-test-framework", file("."))
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives.pdi",
     name := "kettle-test-framework",
-    scalaVersion := "2.13.6",
+    scalaVersion := "2.13.10",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("https://github.com/nationalarchives/kettle-test-framework")),
     startYear := Some(2021),
@@ -33,7 +33,7 @@ lazy val root = Project("kettle-test-framework", file("."))
       )
     ),
     scalacOptions ++= Seq(
-      "-target:jvm-1.8",
+      "-release:8",
       "-encoding",
       "utf-8"
     ),
