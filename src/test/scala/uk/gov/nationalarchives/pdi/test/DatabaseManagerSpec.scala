@@ -81,9 +81,8 @@ class DatabaseManagerSpec extends AnyWordSpec with Matchers with MockitoSugar wi
   override def beforeEach(): Unit =
     clearDatabaseDataDir()
 
-  override def afterEach() {
+  override def afterEach(): Unit =
     clearDatabaseDataDir()
-  }
 
   private def clearDatabaseDataDir(): Unit = {
     val dataDir = Paths.get(databaseDir)
