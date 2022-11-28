@@ -33,9 +33,11 @@ lazy val root = Project("kettle-test-framework", file("."))
       )
     ),
     scalacOptions ++= Seq(
-      "-release:8",
+      "-release",
+      "8",
       "-encoding",
-      "utf-8"
+      "utf-8",
+      "-deprecation",
     ),
     resolvers ++= Seq(
       Resolver.mavenLocal,
