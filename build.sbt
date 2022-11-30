@@ -58,6 +58,7 @@ lazy val root = Project("kettle-test-framework", file("."))
       "org.scalatestplus"          %% "mockito-3-4"           % "3.2.10.0"     % Test,
       "commons-io"                  % "commons-io"            % "2.11.0"       % Test
     ),
+    dependencyOverrides += "org.syslog4j" % "syslog4j" % "0.9.34",
     dependencyCheckArchiveAnalyzerEnabled := Some(false),
     dependencyCheckAssemblyAnalyzerEnabled := Some(false),
     dependencyCheckAutoconfAnalyzerEnabled := Some(false),
