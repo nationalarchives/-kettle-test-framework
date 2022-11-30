@@ -37,7 +37,7 @@ lazy val root = Project("kettle-test-framework", file("."))
       "8",
       "-encoding",
       "utf-8",
-      "-deprecation",
+      "-deprecation"
     ),
     resolvers ++= Seq(
       Resolver.mavenLocal,
