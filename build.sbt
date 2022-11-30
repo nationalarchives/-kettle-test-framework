@@ -41,8 +41,7 @@ lazy val root = Project("kettle-test-framework", file("."))
     ),
     resolvers ++= Seq(
       Resolver.mavenLocal,
-//      "PentahoMaven" at "https://repo.orl.eng.hitachivantara.com/ui/native/pnt-mvn/"
-      "PentahoNexus" at "https://nexus.pentaho.org/content/groups/omni"
+      "PentahoMaven" at "https://repo.orl.eng.hitachivantara.com/artifactory/pnt-mvn/"
     ),
     headerLicense := Some(HeaderLicense.MIT("2021", "The National Archives")),
     libraryDependencies ++= Seq(
