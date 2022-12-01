@@ -103,9 +103,10 @@ class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterA
     deleteTestFiles()
   }
 
-  override def afterAll(): Unit =
+  override def afterAll(): Unit = {
     clearDatabaseDataDir()
-  deleteTestFiles()
+    deleteTestFiles()
+  }
 
   private def clearDatabaseDataDir(): Unit =
     delete(Paths.get(databaseDir))
