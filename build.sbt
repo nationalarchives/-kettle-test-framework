@@ -41,7 +41,8 @@ lazy val root = Project("kettle-test-framework", file("."))
     ),
     resolvers ++= Seq(
       Resolver.mavenLocal,
-      "PentahoMaven" at "https://repo.orl.eng.hitachivantara.com/artifactory/pnt-mvn/"
+      "PentahoMaven" at "https://repo.orl.eng.hitachivantara.com/artifactory/pnt-mvn/",
+      "Clojars" at "https://clojars.org/repo/"
     ),
     headerLicense := Some(HeaderLicense.MIT("2021", "The National Archives")),
     libraryDependencies ++= Seq(
@@ -58,7 +59,6 @@ lazy val root = Project("kettle-test-framework", file("."))
       "org.scalatestplus"          %% "mockito-3-4"           % "3.2.10.0"     % Test,
       "commons-io"                  % "commons-io"            % "2.11.0"       % Test
     ),
-    dependencyOverrides += "org.syslog4j" % "syslog4j" % "0.9.34",
     dependencyCheckArchiveAnalyzerEnabled := Some(false),
     dependencyCheckAssemblyAnalyzerEnabled := Some(false),
     dependencyCheckAutoconfAnalyzerEnabled := Some(false),
