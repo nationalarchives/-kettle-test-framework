@@ -11,7 +11,7 @@ lazy val root = Project("kettle-test-framework", file("."))
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives.pdi",
     name := "kettle-test-framework",
-    scalaVersion := "2.13.6",
+    scalaVersion := "2.13.10",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("https://github.com/nationalarchives/kettle-test-framework")),
     startYear := Some(2021),
@@ -33,13 +33,16 @@ lazy val root = Project("kettle-test-framework", file("."))
       )
     ),
     scalacOptions ++= Seq(
-      "-target:jvm-1.8",
+      "-release",
+      "8",
       "-encoding",
-      "utf-8"
+      "utf-8",
+      "-deprecation"
     ),
     resolvers ++= Seq(
       Resolver.mavenLocal,
-      "PentahoNexus" at "https://nexus.pentaho.org/content/groups/omni"
+      "PentahoMaven" at "https://repo.orl.eng.hitachivantara.com/artifactory/pnt-mvn/",
+      "Clojars" at "https://clojars.org/repo/"
     ),
     headerLicense := Some(HeaderLicense.MIT("2021", "The National Archives")),
     libraryDependencies ++= Seq(
