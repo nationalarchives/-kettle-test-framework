@@ -5,6 +5,9 @@ val pentahoVersion = "9.1.0.0-324"
 
 ThisBuild / versionScheme := Some("semver-spec")
 
+enablePlugins(GitBranchPrompt)
+enablePlugins(GitPlugin)
+
 lazy val root = Project("kettle-test-framework", file("."))
   .configs(IntegrationTest)
   .settings(
@@ -101,3 +104,11 @@ lazy val root = Project("kettle-test-framework", file("."))
       pushChanges
     )
   )
+
+addCommandAlias(
+  "formatAndCommit",
+  "; clean " +
+    "; fmt " +
+    "; git add -A" +
+    "; git commit -m \"Formatting files before pushing them to remote\""
+)
