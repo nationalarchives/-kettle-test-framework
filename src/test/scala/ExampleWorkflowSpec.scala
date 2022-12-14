@@ -33,7 +33,8 @@ import java.nio.file.{ Files, Paths }
 import java.sql.DriverManager
 import scala.util.{ Failure, Success, Using }
 
-class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
+class ExampleWorkflowSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll
+{
 
   // TODO(AR) this is a workaround for the driver being unregistered after the first run of the tests in sbt -- see https://stackoverflow.com/questions/14033629/playframework-2-0-scala-no-suitable-driver-found-in-tests
   DriverManager.registerDriver(new org.h2.Driver)
