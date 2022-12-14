@@ -110,5 +110,5 @@ addCommandAlias(
   "; clean " +
     "; fmt " +
     "; git add -A" +
-    "; git diff-index --quiet HEAD || git commit -m \"Formatting files before pushing them to remote\""
+    "; git commit --allow-empty -m \"Formatting files before pushing them to remote\""
 )
