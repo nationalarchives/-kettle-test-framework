@@ -1,2 +1,3 @@
 alias fmt=;scalafmt;Test / scalafmt;scalafmtSbt
 alias fmtCheck=;scalafmtCheck;Test / scalafmtCheck;scalafmtSbtCheck
+alias formatAndCommit=;clean;fmt;git add -A;git commit --allow-empty -m "Formatting files before pushing them to remote"

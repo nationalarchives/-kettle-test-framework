@@ -104,11 +104,3 @@ lazy val root = Project("kettle-test-framework", file("."))
       pushChanges
     )
   )
-
-addCommandAlias(
-  "formatAndCommit",
-  "; clean " +
-    "; fmt " +
-    "; git add -A" +
-    "; git commit --allow-empty -m \"Formatting files before pushing them to remote\""
-)
