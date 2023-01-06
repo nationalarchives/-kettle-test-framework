@@ -5,6 +5,9 @@ val pentahoVersion = "9.1.0.0-324"
 
 ThisBuild / versionScheme := Some("semver-spec")
 
+enablePlugins(GitBranchPrompt)
+enablePlugins(GitPlugin)
+
 lazy val root = Project("kettle-test-framework", file("."))
   .configs(IntegrationTest)
   .settings(

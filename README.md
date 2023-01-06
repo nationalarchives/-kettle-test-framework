@@ -50,3 +50,9 @@ To ensure that your Kettle transformations are suitable for testing it is import
 1. Run `sbt clean release`
 2. Answer the questions
 3. Login to https://oss.sonatype.org/ then Close, and Release the Staging Repository
+
+## Git Hooks
+
+It is recommended for developers to make use of the 'formatAndCommit' alias command as part of a pre-push git hook in order to make sure the code is properly formatted before pushing it to remote. CTD projects are now configured to fail git actions if code is not properly formatted, so in order to avoid this a git hook is handly.
+
+In order to create the hook you need to go to the following path '.git/hooks' and create a new script file called 'pre-push' containing just a single line 'sbt formatAndCommit'. This file should have execution permissions.
